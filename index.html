@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Ale Game Land - Subway Runner 3D HD</title>
+  <title>Ale Craft 3D: Minecraft Edition & Skins</title>
 
   <style>
     * {
@@ -14,896 +14,994 @@
       -webkit-user-select: none;
     }
     body {
-      background-color: #04050d;
+      background: #060814;
       overflow: hidden;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       color: #fff;
     }
-    #game-container {
+
+    /* --- LAUNCHER PRINCIPAL --- */
+    #hub-screen {
       position: absolute;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
+      background: radial-gradient(circle at center, #0f172a 0%, #030712 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      z-index: 100;
+      padding: 25px 15px;
+      overflow-y: auto;
     }
-    
-    /* HUD Superior de Neón */
-    #hud {
+    .hub-title {
+      font-size: 34px;
+      font-weight: 900;
+      color: #39ff14;
+      text-shadow: 0 0 20px #39ff14, 0 0 35px #00f0ff;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-align: center;
+    }
+    .hub-subtitle {
+      font-size: 13px;
+      color: #00f0ff;
+      letter-spacing: 3px;
+      margin-top: 4px;
+      margin-bottom: 20px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .hub-main-buttons {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 25px;
+      width: 100%;
+      max-width: 800px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .main-social-btn {
+      padding: 12px 24px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 900;
+      text-decoration: none;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+      transition: transform 0.15s;
+    }
+    .main-social-btn:active { transform: scale(0.96); }
+    .btn-yt-main { background: linear-gradient(45deg, #ff0000, #b30000); }
+    .btn-fb-main { background: linear-gradient(45deg, #1877f2, #0d52a8); }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      width: 100%;
+      max-width: 820px;
+      margin-bottom: 25px;
+    }
+    .game-card {
+      background: #111827;
+      border: 2px solid #1e293b;
+      border-radius: 14px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .game-card:hover {
+      transform: translateY(-4px);
+      border-color: #00f0ff;
+    }
+    .card-tag {
+      font-size: 10px;
+      font-weight: 900;
+      padding: 3px 8px;
+      border-radius: 20px;
+      width: fit-content;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .card-title { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+    .card-desc { font-size: 12px; color: #94a3b8; line-height: 1.4; margin-bottom: 14px; }
+    .card-btn {
+      background: linear-gradient(45deg, #00f0ff, #39ff14);
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      color: #000;
+      font-weight: 900;
+      font-size: 13px;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    /* --- MOTOR 3D --- */
+    #game-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: none;
+    }
+    #canvas-container { width: 100%; height: 100%; }
+
+    #btn-back-hub, #btn-back-hub-draw {
       position: absolute;
       top: 15px;
       left: 15px;
-      right: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      background: rgba(15, 23, 42, 0.9);
+      border: 2px solid #ff0055;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      z-index: 50;
+    }
+
+    #crosshair {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 18px;
+      height: 18px;
+      transform: translate(-50%, -50%);
       pointer-events: none;
       z-index: 10;
     }
-    .hud-box {
-      background: rgba(10, 15, 30, 0.88);
-      border: 2px solid #00f0ff;
-      border-radius: 14px;
-      padding: 8px 18px;
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.5), inset 0 0 10px rgba(0, 240, 255, 0.2);
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    #crosshair::before, #crosshair::after {
+      content: '';
+      position: absolute;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 0 2px #000;
     }
-    .hud-title {
-      font-size: 11px;
-      text-transform: uppercase;
+    #crosshair::before { top: 7px; left: 0; width: 18px; height: 4px; }
+    #crosshair::after { top: 0; left: 7px; width: 4px; height: 18px; }
+
+    #autosave-indicator {
+      position: absolute;
+      bottom: 85px;
+      right: 15px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid #39ff14;
       color: #39ff14;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
       font-weight: 800;
-      letter-spacing: 1px;
+      z-index: 20;
+      opacity: 0;
+      transition: opacity 0.3s;
     }
-    .hud-value {
-      font-size: 22px;
+
+    /* Hotbar */
+    #hotbar {
+      position: absolute;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
+      background: rgba(20, 20, 30, 0.9);
+      border: 2px solid #00f0ff;
+      border-radius: 12px;
+      padding: 6px 10px;
+      z-index: 15;
+      overflow-x: auto;
+      max-width: 95vw;
+    }
+    .slot {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      border: 2px solid #444;
+      border-radius: 6px;
+      background-size: cover !important;
+      image-rendering: pixelated;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      padding: 2px;
+      font-size: 9px;
       font-weight: 900;
-      color: #ffffff;
-      text-shadow: 0 0 10px #00f0ff;
+      text-shadow: 1px 1px 0 #000;
     }
-    .coin-icon {
-      width: 22px;
-      height: 22px;
-      background: radial-gradient(circle, #fff7ad 0%, #ffd700 60%, #b8860b 100%);
+    .slot.active {
+      border-color: #39ff14;
+      transform: scale(1.15);
+      box-shadow: 0 0 10px #39ff14;
+    }
+
+    /* Selector de Skins Flotante */
+    #skin-selector {
+      position: absolute;
+      top: 15px;
+      left: 135px;
+      display: flex;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 2px solid #00f0ff;
+      border-radius: 10px;
+      padding: 6px 10px;
+      z-index: 20;
+    }
+    .skin-btn {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #fff;
+      padding: 5px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .skin-btn.active {
+      background: #00f0ff;
+      color: #000;
+      border-color: #fff;
+    }
+
+    #yt-player-box {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 220px;
+      background: #111;
+      border: 2px solid #ff0055;
+      border-radius: 10px;
+      overflow: hidden;
+      z-index: 20;
+    }
+    #yt-header {
+      background: #cc0000;
+      padding: 5px 10px;
+      font-size: 11px;
+      font-weight: 900;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #yt-iframe-container { width: 100%; height: 120px; }
+    #yt-iframe-container iframe { width: 100%; height: 100%; border: none; }
+
+    #action-panel {
+      position: absolute;
+      top: 60px;
+      left: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 15;
+    }
+    .panel-btn {
+      background: rgba(20, 25, 45, 0.9);
+      border: 1.5px solid #00f0ff;
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    /* Estudio de Dibujo */
+    #draw-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #0f172a;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 90;
+      padding: 20px;
+    }
+    #draw-toolbar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .color-picker-btn {
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       border: 2px solid #fff;
-      box-shadow: 0 0 12px #ffd700;
-    }
-
-    /* Banner Inferior */
-    #ad-banner-bottom {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100vw;
-      height: 48px;
-      background: rgba(4, 6, 15, 0.95);
-      border-top: 2px solid #39ff14;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 15;
-      font-size: 12px;
-      color: #00f0ff;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      font-weight: 700;
-    }
-
-    /* Pantallas de Menú y Game Over */
-    .overlay-screen {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: radial-gradient(circle, rgba(15, 20, 45, 0.94) 0%, rgba(5, 6, 15, 0.98) 100%);
-      backdrop-filter: blur(10px);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 20;
-      padding: 20px;
-      text-align: center;
-    }
-    .game-title {
-      font-size: 40px;
-      font-weight: 900;
-      color: #39ff14;
-      text-shadow: 0 0 20px #39ff14, 0 0 40px #00f0ff;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 4px;
-    }
-    .subtitle {
-      font-size: 14px;
-      color: #00f0ff;
-      letter-spacing: 4px;
-      margin-bottom: 25px;
-      font-weight: bold;
-      text-shadow: 0 0 10px #00f0ff;
-    }
-    .btn-group {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      width: 100%;
-      max-width: 300px;
-    }
-    .btn {
-      background: linear-gradient(45deg, #00f0ff, #39ff14);
-      border: none;
-      padding: 14px 25px;
-      border-radius: 50px;
-      color: #000;
-      font-size: 17px;
-      font-weight: 900;
       cursor: pointer;
-      text-transform: uppercase;
-      box-shadow: 0 0 25px rgba(57, 255, 20, 0.6);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
-    .btn-secondary {
-      background: linear-gradient(45deg, #ff007f, #7928ca);
-      color: #fff;
-      box-shadow: 0 0 25px rgba(255, 0, 127, 0.6);
-    }
-    .btn-yt {
-      background: linear-gradient(45deg, #ff0000, #b30000);
-      color: #ffffff;
-      font-size: 15px;
-      box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
-      padding: 12px 20px;
-      text-decoration: none;
-      display: inline-block;
-    }
-    .btn-fb {
-      background: linear-gradient(45deg, #1877f2, #0d52a8);
-      color: #ffffff;
-      font-size: 15px;
-      box-shadow: 0 0 20px rgba(24, 119, 242, 0.6);
-      padding: 12px 20px;
-      text-decoration: none;
-      display: inline-block;
-    }
-    .btn:active {
-      transform: scale(0.96);
-    }
-    .instructions {
-      margin-top: 22px;
-      font-size: 13px;
-      color: #94a3b8;
-      line-height: 1.6;
-    }
-    .hidden {
-      display: none !important;
+    #paint-canvas {
+      background: #ffffff;
+      border: 4px solid #00f0ff;
+      border-radius: 12px;
+      touch-action: none;
     }
 
-    #ad-modal {
+    #mobile-controls {
       position: absolute;
-      top: 0;
-      left: 0;
+      bottom: 80px;
       width: 100vw;
-      height: 100vh;
-      background: #000;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 30;
-      color: #fff;
+      display: none;
+      justify-content: space-between;
+      padding: 0 25px;
+      pointer-events: none;
+      z-index: 15;
     }
-    .ad-timer {
-      font-size: 18px;
-      color: #39ff14;
-      margin-top: 15px;
-      font-weight: bold;
+    .touch-btn {
+      width: 60px;
+      height: 60px;
+      background: rgba(0, 0, 0, 0.65);
+      border: 2px solid #00f0ff;
+      border-radius: 12px;
+      color: #fff;
+      font-weight: 900;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: auto;
     }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-  <div id="game-container"></div>
 
-  <!-- HUD -->
-  <div id="hud">
-    <div class="hud-box">
-      <div>
-        <div class="hud-title">Distancia</div>
-        <div class="hud-value" id="score-dist">0m</div>
-      </div>
-    </div>
-    <div class="hud-box">
-      <div class="coin-icon"></div>
-      <div>
-        <div class="hud-title">Monedas</div>
-        <div class="hud-value" id="score-coins">0</div>
-      </div>
-    </div>
-  </div>
+  <!-- LAUNCHER -->
+  <div id="hub-screen">
+    <h1 class="hub-title">ALE GAME LAND</h1>
+    <p class="hub-subtitle">PORTAL OFICIAL DE JUEGOS & MODS</p>
 
-  <!-- Banner Inferior -->
-  <div id="ad-banner-bottom">
-    <span>TU REVISTA DIGITAL PR • ALE GAME LAND</span>
-  </div>
-
-  <!-- Menú de Inicio -->
-  <div id="start-screen" class="overlay-screen">
-    <h1 class="game-title">ALE GAME LAND</h1>
-    <p class="subtitle">EL MINI CIBERNAUTA RUNNER</p>
-    <div class="btn-group">
-      <button id="btn-start" class="btn">¡JUGAR AHORA!</button>
-      <button class="btn btn-yt" onclick="window.open('https://youtube.com/@alegameland?si=rcF-LK4YSlY9AOJ2', '_blank')">
+    <div class="hub-main-buttons">
+      <a class="main-social-btn btn-yt-main" href="https://youtube.com/@alegameland?si=rcF-LK4YSlY9AOJ2" target="_blank">
         ▶ Canal de YouTube
-      </button>
-      <button class="btn btn-fb" onclick="window.open('https://www.facebook.com/share/1DWVyQuXK1/', '_blank')">
+      </a>
+      <a class="main-social-btn btn-fb-main" href="https://www.facebook.com/share/1DWVyQuXK1/" target="_blank">
         👍 Página de Facebook
-      </button>
+      </a>
     </div>
-    <div class="instructions">
-      🎮 <b>PC:</b> Flechas / WASD para moverte y saltar<br />
-      📱 <b>Móvil:</b> Desliza el dedo en pantalla
+
+    <div class="games-grid">
+      <div class="game-card" onclick="launchGame('classic')">
+        <div>
+          <span class="card-tag" style="background: #15803d; color: #fff;">Minecraft Voxel + Skins</span>
+          <h2 class="card-title">Ale Craft 3D: Cyber Builder</h2>
+          <p class="card-desc">Construye con bloques clásicos, diamantes, hojas, agua, antorchas y bloques DJ. Cambia de skin en tiempo real.</p>
+        </div>
+        <button class="card-btn">ENTRAR A JUGAR</button>
+      </div>
+
+      <div class="game-card" onclick="launchDrawStudio()">
+        <div>
+          <span class="card-tag" style="background: #e11d48; color: #fff;">Auto-Guardado</span>
+          <h2 class="card-title">Estudio de Arte & Pintura</h2>
+          <p class="card-desc">Crea y diseña dibujos o skins en 2D. Guarda y descarga tus creaciones para enviarlas a las redes de Ale.</p>
+        </div>
+        <button class="card-btn" style="background: linear-gradient(45deg, #ff007f, #e11d48); color: #fff;">ABRIR ESTUDIO</button>
+      </div>
     </div>
   </div>
 
-  <!-- Pantalla de Game Over -->
-  <div id="gameover-screen" class="overlay-screen hidden">
-    <h1 class="game-title" style="color: #ff3366; text-shadow: 0 0 25px #ff3366;">¡FIN DEL JUEGO!</h1>
-    <p class="subtitle" id="final-stats">Distancia: 0m | Monedas: 0</p>
-    <div class="btn-group">
-      <button id="btn-reward-ad" class="btn btn-secondary">📺 Ver Video (+1 Vida)</button>
-      <button id="btn-restart" class="btn">Reintentar</button>
-      <button class="btn btn-fb" onclick="window.open('https://www.facebook.com/share/1DWVyQuXK1/', '_blank')">
-        📸 Deja tu Récord en Facebook
-      </button>
+  <!-- MOTOR 3D -->
+  <div id="game-wrapper">
+    <button id="btn-back-hub" onclick="backToHub()">◀ Menú Principal</button>
+    <div id="canvas-container"></div>
+    <div id="crosshair"></div>
+    <div id="autosave-indicator">💾 Auto-guardado</div>
+
+    <!-- Selector de Skins -->
+    <div id="skin-selector">
+      <button class="skin-btn active" onclick="setSkin('cibernauta')">Ale Cibernauta</button>
+      <button class="skin-btn" onclick="setSkin('dj')">Ale DJ Urbano</button>
+      <button class="skin-btn" onclick="setSkin('creeper')">Creeper Neón</button>
+      <button class="skin-btn" onclick="setSkin('knight')">Cyber Knight</button>
+    </div>
+
+    <div id="action-panel">
+      <button class="panel-btn" id="btn-newgame" style="border-color: #ffaa00;">⭐ Nuevo Mundo</button>
+      <button class="panel-btn" id="btn-save">💾 Guardar Partida</button>
+      <button class="panel-btn" id="btn-export">📤 Descargar (.json)</button>
+      <button class="panel-btn" id="btn-fly" style="border-color: #39ff14;">🚀 Modo Vuelo: OFF</button>
+    </div>
+
+    <div id="yt-player-box">
+      <div id="yt-header">
+        <span>ALE MUSIC LIVE</span>
+        <span style="cursor:pointer" onclick="togglePlayer()">▼</span>
+      </div>
+      <div id="yt-iframe-container">
+        <iframe 
+          id="yt-video"
+          src="https://www.youtube.com/embed?listType=user_uploads&list=alegameland&autoplay=1&mute=0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+
+    <!-- Hotbar Expandida Estilo Minecraft -->
+    <div id="hotbar">
+      <div class="slot active" id="slot-1" data-type="1" title="Pasto">1</div>
+      <div class="slot" id="slot-2" data-type="2" title="Tierra">2</div>
+      <div class="slot" id="slot-3" data-type="3" title="Piedra">3</div>
+      <div class="slot" id="slot-4" data-type="4" title="Madera">4</div>
+      <div class="slot" id="slot-5" data-type="5" title="Hojas">5</div>
+      <div class="slot" id="slot-6" data-type="6" title="Bloque Diamante">6</div>
+      <div class="slot" id="slot-7" data-type="7" title="Bloque Oro">7</div>
+      <div class="slot" id="slot-8" data-type="8" title="Agua / Cristal">8</div>
+      <div class="slot" id="slot-9" data-type="9" title="DJ Bombo">9</div>
+      <div class="slot" id="slot-10" data-type="10" title="DJ Snare">10</div>
+      <div class="slot" id="slot-11" data-type="11" title="DJ Dembow">11</div>
+      <div class="slot" id="slot-12" data-type="12" title="Trampolín">12</div>
+      <div class="slot" id="slot-13" data-type="13" title="Placa YouTube">13</div>
+      <div class="slot" id="slot-14" data-type="14" title="Tu Revista PR">14</div>
+    </div>
+
+    <div id="mobile-controls">
+      <div class="touch-btn" id="btn-mine" style="border-color: #ff3366;">MINAR</div>
+      <div class="touch-btn" id="btn-jump">SALTO</div>
+      <div class="touch-btn" id="btn-place" style="border-color: #39ff14;">COLOCAR</div>
     </div>
   </div>
 
-  <!-- Modal de Anuncio -->
-  <div id="ad-modal" class="hidden">
-    <h2 style="color: #00f0ff; margin-bottom: 10px;">ANUNCIO PATROCINADO</h2>
-    <p>Apoyando a <b>Tu Revista Digital PR</b> & <b>Ale Game Land</b></p>
-    <div class="ad-timer" id="ad-timer-text">Reanudando en 3s...</div>
+  <!-- ESTUDIO DE DIBUJO -->
+  <div id="draw-screen">
+    <button id="btn-back-hub-draw" onclick="backToHubFromDraw()">◀ Menú Principal</button>
+    <h2 style="color: #00f0ff; margin-bottom: 10px; font-size: 20px;">🎨 ESTUDIO DE ARTE & SKINS</h2>
+    
+    <div id="draw-toolbar">
+      <div class="color-picker-btn" style="background: #000;" onclick="setDrawColor('#000000')"></div>
+      <div class="color-picker-btn" style="background: #ff0055;" onclick="setDrawColor('#ff0055')"></div>
+      <div class="color-picker-btn" style="background: #00f0ff;" onclick="setDrawColor('#00f0ff')"></div>
+      <div class="color-picker-btn" style="background: #39ff14;" onclick="setDrawColor('#39ff14')"></div>
+      <div class="color-picker-btn" style="background: #ffd700;" onclick="setDrawColor('#ffd700')"></div>
+      <div class="color-picker-btn" style="background: #ffffff;" onclick="setDrawColor('#ffffff')"></div>
+      <button class="panel-btn" onclick="newDrawingGame()" style="border-color: #ffaa00;">⭐ Nuevo Dibujo</button>
+      <button class="panel-btn" onclick="saveDrawing()" style="border-color: #39ff14;">💾 Descargar PNG</button>
+    </div>
+
+    <canvas id="paint-canvas" width="600" height="420"></canvas>
   </div>
 
   <script>
-    const LANES = [-2.5, 0, 2.5];
-    let currentLane = 1;
-    let isJumping = false;
-    let isSliding = false;
-    let jumpVelocity = 0;
-    const gravity = 0.55;
-    let speed = 0.5;
-    const maxSpeed = 1.25;
-
-    let distance = 0;
-    let coinsCount = 0;
-    let isPlaying = false;
-
-    let scene, camera, renderer;
-    let playerGroup, playerSprite;
-    let obstacles = [];
-    let coins = [];
-    let billboards = [];
-    let buildings = [];
-    let particles;
-
-    // SFX Sintetizado
+    // --- MOTOR DE SONIDO SINTETIZADO ---
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     let audioCtx;
 
     function playSound(type) {
       if (!audioCtx) audioCtx = new AudioCtx();
+      const t = audioCtx.currentTime;
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
+      osc.connect(gain); gain.connect(audioCtx.destination);
 
-      if (type === 'coin') {
-        osc.frequency.setValueAtTime(987.77, audioCtx.currentTime);
-        osc.frequency.setValueAtTime(1318.51, audioCtx.currentTime + 0.08);
-        gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.25);
-      } else if (type === 'jump') {
-        osc.frequency.setValueAtTime(250, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(650, audioCtx.currentTime + 0.16);
-        gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.16);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.16);
-      } else if (type === 'hit') {
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(120, audioCtx.currentTime);
-        osc.frequency.linearRampToValueAtTime(30, audioCtx.currentTime + 0.35);
-        gain.gain.setValueAtTime(0.45, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.35);
+      if (type === 'kick') {
+        osc.frequency.setValueAtTime(140, t);
+        osc.frequency.exponentialRampToValueAtTime(0.01, t + 0.3);
+        gain.gain.setValueAtTime(0.8, t);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.3);
+        osc.start(t); osc.stop(t + 0.3);
+      } else if (type === 'snare') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(220, t);
+        gain.gain.setValueAtTime(0.5, t);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
+        osc.start(t); osc.stop(t + 0.2);
+      } else if (type === 'dembow') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(85, t);
+        osc.frequency.exponentialRampToValueAtTime(45, t + 0.25);
+        gain.gain.setValueAtTime(0.9, t);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.25);
+        osc.start(t); osc.stop(t + 0.25);
+      } else if (type === 'pop') {
+        osc.frequency.setValueAtTime(400, t);
+        gain.gain.setValueAtTime(0.2, t);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
+        osc.start(t); osc.stop(t + 0.1);
       }
     }
 
-    // --- GENERADOR DE AVATAR DE ALE (CANVAS HD) ---
-    function createAleCharacterTexture() {
+    // --- TEXTURAS PIXEL ART 16x16 ESTILO MINECRAFT ---
+    function generateTexture(type) {
       const canvas = document.createElement('canvas');
-      canvas.width = 256;
-      canvas.height = 384;
+      canvas.width = 16; canvas.height = 16;
       const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingEnabled = false;
 
-      // Sombra base
-      ctx.fillStyle = 'rgba(0,0,0,0.3)';
-      ctx.beginPath();
-      ctx.ellipse(128, 360, 50, 15, 0, 0, Math.PI * 2);
-      ctx.fill();
+      if (type === 'grass') {
+        ctx.fillStyle = '#4ca429'; ctx.fillRect(0, 0, 16, 16);
+        for (let i = 0; i < 20; i++) {
+          ctx.fillStyle = Math.random() > 0.5 ? '#3b8520' : '#5dbb34';
+          ctx.fillRect(Math.floor(Math.random() * 16), Math.floor(Math.random() * 16), 1, 1);
+        }
+      } else if (type === 'dirt') {
+        ctx.fillStyle = '#866043'; ctx.fillRect(0, 0, 16, 16);
+      } else if (type === 'stone') {
+        ctx.fillStyle = '#737373'; ctx.fillRect(0, 0, 16, 16);
+        for (let i = 0; i < 25; i++) {
+          ctx.fillStyle = Math.random() > 0.5 ? '#525252' : '#8a8a8a';
+          ctx.fillRect(Math.floor(Math.random() * 16), Math.floor(Math.random() * 16), 1, 1);
+        }
+      } else if (type === 'wood') {
+        ctx.fillStyle = '#a1683a'; ctx.fillRect(0, 0, 16, 16);
+        for (let y = 0; y < 16; y++) {
+          ctx.fillStyle = y % 4 === 0 ? '#6d421e' : '#b87c4c';
+          ctx.fillRect(0, y, 16, 1);
+        }
+      } else if (type === 'leaves') {
+        ctx.fillStyle = '#2d6a1e'; ctx.fillRect(0, 0, 16, 16);
+        for (let i = 0; i < 30; i++) {
+          ctx.fillStyle = Math.random() > 0.5 ? '#1b4312' : '#3f8a2d';
+          ctx.fillRect(Math.floor(Math.random() * 16), Math.floor(Math.random() * 16), 2, 2);
+        }
+      } else if (type === 'diamond') {
+        ctx.fillStyle = '#00f0ff'; ctx.fillRect(0, 0, 16, 16);
+        ctx.fillStyle = '#e0ffff'; ctx.fillRect(4, 4, 8, 8);
+      } else if (type === 'gold') {
+        ctx.fillStyle = '#f59e0b'; ctx.fillRect(0, 0, 16, 16);
+        ctx.fillStyle = '#fef08a'; ctx.fillRect(4, 4, 8, 8);
+      } else if (type === 'water') {
+        ctx.fillStyle = '#0284c7'; ctx.fillRect(0, 0, 16, 16);
+        ctx.fillStyle = '#38bdf8'; ctx.fillRect(2, 4, 12, 4);
+      } else if (type === 'kick') {
+        ctx.fillStyle = '#ff0055'; ctx.fillRect(0, 0, 16, 16);
+        ctx.fillStyle = '#fff'; ctx.fillRect(4, 4, 8, 8);
+      } else if (type === 'snare') {
+        ctx.fillStyle = '#38bdf8'; ctx.fillRect(0, 0, 16, 16);
+        ctx.fillStyle = '#000'; ctx.fillRect(4, 4, 8, 8);
+      } else if (type === 'dembow') {
+        ctx.fillStyle = '#d97706'; ctx.fillRect(0, 0, 16, 16);
+        ctx.fillStyle = '#451a03'; ctx.fillRect(2, 2, 12, 12);
+      } else if (type === 'trampoline') {
+        ctx.fillStyle = '#10b981'; ctx.fillRect(0, 0, 16, 16);
+        ctx.fillStyle = '#ffffff'; ctx.fillRect(6, 2, 4, 12); ctx.fillRect(2, 6, 12, 4);
+      } else if (type === 'yt_plate') {
+        ctx.fillStyle = '#f1f5f9'; ctx.fillRect(0, 0, 16, 16);
+        ctx.fillStyle = '#ff0000'; ctx.fillRect(4, 4, 8, 8);
+      } else if (type === 'sponsor') {
+        ctx.fillStyle = '#0f172a'; ctx.fillRect(0, 0, 16, 16);
+        ctx.fillStyle = '#39ff14'; ctx.strokeRect(1, 1, 14, 14);
+      }
 
-      // Zapatillas Urbanas (Negro / Rojo / Neón)
-      ctx.fillStyle = '#ff0055';
-      ctx.fillRect(80, 310, 36, 45);
-      ctx.fillRect(140, 310, 36, 45);
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(80, 345, 36, 12);
-      ctx.fillRect(140, 345, 36, 12);
-
-      // Pantalón Cargo Oscuro
-      ctx.fillStyle = '#1e2029';
-      ctx.fillRect(85, 220, 30, 95);
-      ctx.fillRect(141, 220, 30, 95);
-
-      // Sudadera Negra con Camo Verde Neón (Ale Game Land)
-      ctx.fillStyle = '#111218';
-      ctx.beginPath();
-      ctx.roundRect(65, 120, 126, 110, 16);
-      ctx.fill();
-
-      // Franjas Verdes Neón
-      ctx.fillStyle = '#39ff14';
-      ctx.fillRect(65, 155, 126, 22);
-      ctx.fillRect(65, 190, 126, 10);
-
-      // Texto de Sudadera
-      ctx.fillStyle = '#ffffff';
-      ctx.font = '900 13px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('ALE GAME LAND', 128, 172);
-
-      // Brazos
-      ctx.fillStyle = '#111218';
-      ctx.fillRect(42, 130, 25, 75);
-      ctx.fillRect(189, 130, 25, 75);
-      ctx.fillStyle = '#f0be92'; // Manos
-      ctx.beginPath();
-      ctx.arc(54, 210, 12, 0, Math.PI * 2);
-      ctx.arc(201, 210, 12, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Rostro / Cabeza
-      ctx.fillStyle = '#f0be92';
-      ctx.beginPath();
-      ctx.arc(128, 90, 38, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Ojos Grandes Expresivos
-      ctx.fillStyle = '#2c1e14';
-      ctx.beginPath();
-      ctx.ellipse(114, 88, 7, 10, 0, 0, Math.PI * 2);
-      ctx.ellipse(142, 88, 7, 10, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Brillos en los ojos
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(112, 85, 3, 0, Math.PI * 2);
-      ctx.arc(140, 85, 3, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Sonrisa
-      ctx.strokeStyle = '#8a4e28';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.arc(128, 100, 14, 0.2, Math.PI - 0.2);
-      ctx.stroke();
-
-      // Gorra Negra hacia atrás con visera
-      ctx.fillStyle = '#1a1a24';
-      ctx.beginPath();
-      ctx.arc(128, 75, 42, Math.PI, 0);
-      ctx.fill();
-      ctx.fillRect(86, 70, 84, 18);
-      // Visera trasera
-      ctx.fillStyle = '#2e2e3d';
-      ctx.beginPath();
-      ctx.roundRect(145, 62, 35, 10, 4);
-      ctx.fill();
-
-      return new THREE.CanvasTexture(canvas);
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.magFilter = THREE.NearestFilter;
+      texture.minFilter = THREE.NearestFilter;
+      return { texture, dataUrl: canvas.toDataURL() };
     }
 
-    // --- TEXTURAS PARA VALLAS Y BLOQUES ? ---
-    function createQuestionBlockTexture() {
-      const canvas = document.createElement('canvas');
-      canvas.width = 128;
-      canvas.height = 128;
-      const ctx = canvas.getContext('2d');
+    const textures = {
+      1: generateTexture('grass'),
+      2: generateTexture('dirt'),
+      3: generateTexture('stone'),
+      4: generateTexture('wood'),
+      5: generateTexture('leaves'),
+      6: generateTexture('diamond'),
+      7: generateTexture('gold'),
+      8: generateTexture('water'),
+      9: generateTexture('kick'),
+      10: generateTexture('snare'),
+      11: generateTexture('dembow'),
+      12: generateTexture('trampoline'),
+      13: generateTexture('yt_plate'),
+      14: generateTexture('sponsor')
+    };
 
-      ctx.fillStyle = '#f59e0b';
-      ctx.fillRect(0, 0, 128, 128);
-
-      ctx.strokeStyle = '#fbbf24';
-      ctx.lineWidth = 10;
-      ctx.strokeRect(5, 5, 118, 118);
-
-      // Remaches
-      ctx.fillStyle = '#78350f';
-      ctx.fillRect(12, 12, 8, 8);
-      ctx.fillRect(108, 12, 8, 8);
-      ctx.fillRect(12, 108, 8, 8);
-      ctx.fillRect(108, 108, 8, 8);
-
-      // Signo de interrogación
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 70px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('?', 64, 92);
-
-      return new THREE.CanvasTexture(canvas);
+    const materials = {};
+    for (let k in textures) {
+      materials[k] = new THREE.MeshLambertMaterial({ 
+        map: textures[k].texture,
+        transparent: k === '8',
+        opacity: k === '8' ? 0.75 : 1.0
+      });
     }
 
-    function createBillboardTexture(title, subtitle) {
-      const canvas = document.createElement('canvas');
-      canvas.width = 512;
-      canvas.height = 256;
-      const ctx = canvas.getContext('2d');
+    // --- THREE JS MOTOR VOXEL ---
+    let scene, camera, renderer, raycaster;
+    let blocks = {};
+    let blockMeshes = [];
+    let currentBlockType = 1;
+    const blockSize = 2;
+    let isFlyMode = false;
 
-      ctx.fillStyle = '#060919';
-      ctx.fillRect(0, 0, 512, 256);
+    let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false;
+    let direction = new THREE.Vector3();
+    let isInitialized = false;
 
-      ctx.strokeStyle = '#00f0ff';
-      ctx.lineWidth = 12;
-      ctx.strokeRect(6, 6, 500, 244);
+    // Avatar y Skins
+    let avatarMesh;
+    let currentSkin = 'cibernauta';
 
-      ctx.fillStyle = '#39ff14';
-      ctx.font = '900 32px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(title, 256, 105);
+    function createAvatarMesh() {
+      if (avatarMesh) scene.remove(avatarMesh);
 
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 20px sans-serif';
-      ctx.fillText(subtitle, 256, 175);
+      avatarMesh = new THREE.Group();
 
-      return new THREE.CanvasTexture(canvas);
+      // Cabeza
+      const headGeo = new THREE.BoxGeometry(0.8, 0.8, 0.8);
+      let headColor = 0xf0be92;
+      if (currentSkin === 'creeper') headColor = 0x39ff14;
+      if (currentSkin === 'knight') headColor = 0x64748b;
+      const head = new THREE.Mesh(headGeo, new THREE.MeshLambertMaterial({ color: headColor }));
+      head.position.y = 1.6;
+      avatarMesh.add(head);
+
+      // Cuerpo
+      const bodyGeo = new THREE.BoxGeometry(0.9, 1.1, 0.5);
+      let bodyColor = 0x111218;
+      if (currentSkin === 'dj') bodyColor = 0xff0055;
+      if (currentSkin === 'creeper') bodyColor = 0x22c55e;
+      if (currentSkin === 'knight') bodyColor = 0x334155;
+      const body = new THREE.Mesh(bodyGeo, new THREE.MeshLambertMaterial({ color: bodyColor }));
+      body.position.y = 0.7;
+      avatarMesh.add(body);
+
+      // Piernas
+      const legGeo = new THREE.BoxGeometry(0.35, 0.7, 0.35);
+      const legMat = new THREE.MeshLambertMaterial({ color: 0x1e293b });
+      const legL = new THREE.Mesh(legGeo, legMat);
+      legL.position.set(-0.22, -0.15, 0);
+      const legR = new THREE.Mesh(legGeo, legMat);
+      legR.position.set(0.22, -0.15, 0);
+      avatarMesh.add(legL);
+      avatarMesh.add(legR);
+
+      scene.add(avatarMesh);
     }
 
-    // --- INICIALIZACIÓN 3D ---
-    function init() {
-      const container = document.getElementById('game-container');
+    function setSkin(skinName) {
+      currentSkin = skinName;
+      localStorage.setItem('alecraft_skin', skinName);
+      document.querySelectorAll('.skin-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      createAvatarMesh();
+    }
+
+    function launchGame(mode) {
+      document.getElementById('hub-screen').style.display = 'none';
+      document.getElementById('game-wrapper').style.display = 'block';
+      if (!isInitialized) {
+        initThree();
+        isInitialized = true;
+      }
+    }
+
+    function backToHub() {
+      document.getElementById('game-wrapper').style.display = 'none';
+      document.getElementById('hub-screen').style.display = 'flex';
+    }
+
+    function triggerAutosaveIndicator() {
+      const el = document.getElementById('autosave-indicator');
+      el.style.opacity = '1';
+      setTimeout(() => { el.style.opacity = '0'; }, 1000);
+    }
+
+    function initThree() {
+      const container = document.getElementById('canvas-container');
 
       scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x04050e);
-      scene.fog = new THREE.FogExp2(0x04050e, 0.016);
+      scene.background = new THREE.Color(0x78a7ff);
+      scene.fog = new THREE.Fog(0x78a7ff, 40, 120);
 
-      camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 160);
-      camera.position.set(0, 4.2, 6.2);
-      camera.lookAt(0, 1.3, -6);
+      camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 8, 14);
 
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+      renderer = new THREE.WebGLRenderer({ antialias: false });
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.shadowMap.enabled = true;
       container.appendChild(renderer.domElement);
 
-      // Iluminación
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
       scene.add(ambientLight);
 
-      const dirLight = new THREE.DirectionalLight(0x00f0ff, 0.9);
-      dirLight.position.set(10, 20, 10);
-      scene.add(dirLight);
+      const sunLight = new THREE.DirectionalLight(0xfffaed, 0.85);
+      sunLight.position.set(30, 60, 20);
+      sunLight.castShadow = true;
+      scene.add(sunLight);
 
-      createTrack();
-      createCitySkyline();
-      createParticleStars();
-      createPlayer();
-      setupControls();
+      raycaster = new THREE.Raycaster();
 
-      window.addEventListener('resize', onWindowResize);
-    }
+      createAvatarMesh();
+      loadSavedWorld();
+      setupEvents();
+      setupHotbarUI();
 
-    function createTrack() {
-      const roadGeo = new THREE.PlaneGeometry(8.2, 300);
-      const roadMat = new THREE.MeshStandardMaterial({ color: 0x0f111e, roughness: 0.7 });
-      const road = new THREE.Mesh(roadGeo, roadMat);
-      road.rotation.x = -Math.PI / 2;
-      road.position.z = -80;
-      scene.add(road);
-
-      // Líneas de carril de neón
-      for (let x of [-1.35, 1.35]) {
-        const lineGeo = new THREE.PlaneGeometry(0.12, 300);
-        const lineMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
-        const line = new THREE.Mesh(lineGeo, lineMat);
-        line.rotation.x = -Math.PI / 2;
-        line.position.set(x, 0.02, -80);
-        scene.add(line);
+      if ('ontouchstart' in window) {
+        document.getElementById('mobile-controls').style.display = 'flex';
       }
 
-      // Bordes luminosos
-      for (let x of [-4.2, 4.2]) {
-        const borderGeo = new THREE.BoxGeometry(0.35, 0.6, 300);
-        const borderMat = new THREE.MeshStandardMaterial({ color: 0x39ff14, emissive: 0x116600 });
-        const border = new THREE.Mesh(borderGeo, borderMat);
-        border.position.set(x, 0.3, -80);
-        scene.add(border);
-      }
+      window.addEventListener('resize', onResize);
+      animate();
     }
 
-    // Edificios estilo Metrópolis Neón
-    function createCitySkyline() {
-      const buildingGeo = new THREE.BoxGeometry(6, 35, 8);
-      for (let i = 0; i < 20; i++) {
-        const isLeft = i % 2 === 0;
-        const color = isLeft ? 0x0a1026 : 0x120a26;
-        const mat = new THREE.MeshStandardMaterial({ color: color, roughness: 0.9 });
-        const building = new THREE.Mesh(buildingGeo, mat);
-        const xPos = isLeft ? -12 - Math.random() * 4 : 12 + Math.random() * 4;
-        const zPos = -i * 14;
-        building.position.set(xPos, 10, zPos);
-        scene.add(building);
-        buildings.push(building);
-      }
+    const boxGeo = new THREE.BoxGeometry(blockSize, blockSize, blockSize);
+
+    function addBlock(x, y, z, type, shouldSave = true) {
+      const key = `${x},${y},${z}`;
+      if (blocks[key]) return;
+
+      const mesh = new THREE.Mesh(boxGeo, materials[type]);
+      mesh.position.set(x, y, z);
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      mesh.userData = { key, type, x, y, z };
+
+      scene.add(mesh);
+      blocks[key] = { x, y, z, type };
+      blockMeshes.push(mesh);
+
+      if (shouldSave) autoSaveWorld();
     }
 
-    // Partículas luminosas flotantes
-    function createParticleStars() {
-      const particleGeo = new THREE.BufferGeometry();
-      const count = 120;
-      const positions = new Float32Array(count * 3);
-
-      for (let i = 0; i < count * 3; i += 3) {
-        positions[i] = (Math.random() - 0.5) * 30;
-        positions[i + 1] = Math.random() * 15;
-        positions[i + 2] = -Math.random() * 120;
-      }
-
-      particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-      const particleMat = new THREE.PointsMaterial({
-        color: 0x00f0ff,
-        size: 0.3,
-        transparent: true,
-        opacity: 0.8
-      });
-      particles = new THREE.Points(particleGeo, particleMat);
-      scene.add(particles);
+    function removeBlock(mesh) {
+      if (!mesh || !mesh.userData) return;
+      scene.remove(mesh);
+      delete blocks[mesh.userData.key];
+      blockMeshes = blockMeshes.filter(m => m !== mesh);
+      playSound('pop');
+      autoSaveWorld();
     }
 
-    function createPlayer() {
-      playerGroup = new THREE.Group();
-
-      const aleTexture = createAleCharacterTexture();
-      const spriteMat = new THREE.SpriteMaterial({ map: aleTexture, transparent: true });
-      playerSprite = new THREE.Sprite(spriteMat);
-      playerSprite.scale.set(2.1, 2.7, 1);
-      playerSprite.position.y = 1.35;
-      playerGroup.add(playerSprite);
-
-      playerGroup.position.set(LANES[currentLane], 0, 0);
-      scene.add(playerGroup);
-    }
-
-    function spawnBillboard(zPos) {
-      const isLeft = Math.random() > 0.5;
-      const x = isLeft ? -6.0 : 6.0;
-
-      const adType = Math.random() > 0.5;
-      const mainTitle = adType ? "TU REVISTA DIGITAL PR" : "ALE GAME LAND";
-      const subTitle = adType ? "Edicion Digital & Contenido" : "@alegameland en YouTube";
-
-      const geo = new THREE.BoxGeometry(0.2, 2.8, 5.2);
-      const mat = new THREE.MeshBasicMaterial({
-        map: createBillboardTexture(mainTitle, subTitle)
-      });
-      const bb = new THREE.Mesh(geo, mat);
-      bb.position.set(x, 3.0, zPos);
-      scene.add(bb);
-      billboards.push(bb);
-    }
-
-    function spawnObstacle(zPos) {
-      const laneIndex = Math.floor(Math.random() * 3);
-      const x = LANES[laneIndex];
-      const type = Math.floor(Math.random() * 3);
-
-      let obs;
-      if (type === 0) {
-        // Bloque ? dorado estilo plataformas
-        const geo = new THREE.BoxGeometry(1.35, 1.35, 1.35);
-        const mat = new THREE.MeshStandardMaterial({
-          map: createQuestionBlockTexture(),
-          emissive: 0x332200,
-          roughness: 0.3
-        });
-        obs = new THREE.Mesh(geo, mat);
-        obs.position.set(x, 0.68, zPos);
-        obs.userData = { height: 1.35 };
-      } else if (type === 1) {
-        // Tubería verde gamer
-        const geo = new THREE.CylinderGeometry(0.7, 0.7, 1.8, 20);
-        const mat = new THREE.MeshStandardMaterial({
-          color: 0x39ff14,
-          metalness: 0.4,
-          roughness: 0.2,
-          emissive: 0x053300
-        });
-        obs = new THREE.Mesh(geo, mat);
-        obs.position.set(x, 0.9, zPos);
-        obs.userData = { height: 1.8 };
-      } else {
-        // Barrera láser ciberespacio
-        const geo = new THREE.BoxGeometry(1.9, 0.55, 0.35);
-        const mat = new THREE.MeshStandardMaterial({ color: 0xff0055, emissive: 0x880022 });
-        obs = new THREE.Mesh(geo, mat);
-        obs.position.set(x, 0.28, zPos);
-        obs.userData = { height: 0.55 };
-      }
-
-      scene.add(obs);
-      obstacles.push(obs);
-
-      const coinLaneIndex = (laneIndex + 1 + Math.floor(Math.random() * 2)) % 3;
-      spawnCoin(LANES[coinLaneIndex], zPos);
-
-      if (Math.random() > 0.35) {
-        spawnBillboard(zPos);
-      }
-    }
-
-    function spawnCoin(x, z) {
-      const coinGeo = new THREE.CylinderGeometry(0.38, 0.38, 0.09, 16);
-      const coinMat = new THREE.MeshStandardMaterial({
-        color: 0xffd700,
-        metalness: 0.85,
-        roughness: 0.15,
-        emissive: 0x665500
-      });
-      const coin = new THREE.Mesh(coinGeo, coinMat);
-      coin.rotation.x = Math.PI / 2;
-      coin.position.set(x, 0.85, z);
-      scene.add(coin);
-      coins.push(coin);
-    }
-
-    function setupControls() {
-      window.addEventListener('keydown', (e) => {
-        if (!isPlaying) return;
-        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') moveLane(-1);
-        if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') moveLane(1);
-        if ((e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ' || e.key === 'W') && !isJumping) jump();
-        if ((e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') && !isSliding) slide();
-      });
-
-      let touchStartX = 0;
-      let touchStartY = 0;
-      window.addEventListener('touchstart', (e) => {
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-      });
-
-      window.addEventListener('touchend', (e) => {
-        if (!isPlaying) return;
-        let deltaX = e.changedTouches[0].clientX - touchStartX;
-        let deltaY = e.changedTouches[0].clientY - touchStartY;
-
-        if (Math.abs(deltaX) > Math.abs(deltaY)) {
-          if (deltaX > 30) moveLane(1);
-          else if (deltaX < -30) moveLane(-1);
-        } else {
-          if (deltaY < -30 && !isJumping) jump();
-          else if (deltaY > 30 && !isSliding) slide();
-        }
-      });
-
-      document.getElementById('btn-start').addEventListener('click', startGame);
-      document.getElementById('btn-restart').addEventListener('click', startGame);
-      document.getElementById('btn-reward-ad').addEventListener('click', showRewardedAd);
-    }
-
-    function moveLane(dir) {
-      currentLane = Math.max(0, Math.min(2, currentLane + dir));
-    }
-
-    function jump() {
-      isJumping = true;
-      jumpVelocity = 0.24;
-      playSound('jump');
-    }
-
-    function slide() {
-      isSliding = true;
-      playerSprite.scale.set(2.1, 1.35, 1);
-      playerSprite.position.y = 0.68;
-      setTimeout(() => {
-        playerSprite.scale.set(2.1, 2.7, 1);
-        playerSprite.position.y = 1.35;
-        isSliding = false;
-      }, 600);
-    }
-
-    function startGame() {
-      obstacles.forEach(o => scene.remove(o));
-      coins.forEach(c => scene.remove(c));
-      billboards.forEach(b => scene.remove(b));
-      obstacles = [];
-      coins = [];
-      billboards = [];
-
-      currentLane = 1;
-      playerGroup.position.set(LANES[currentLane], 0, 0);
-      distance = 0;
-      coinsCount = 0;
-      speed = 0.5;
-      isJumping = false;
-      isSliding = false;
-
-      document.getElementById('start-screen').classList.add('hidden');
-      document.getElementById('gameover-screen').classList.add('hidden');
-      isPlaying = true;
-
-      for (let z = -20; z > -130; z -= 15) {
-        spawnObstacle(z);
-      }
-    }
-
-    function gameOver() {
-      isPlaying = false;
-      playSound('hit');
-      document.getElementById('final-stats').innerText = 
-        `Distancia: ${Math.floor(distance)}m | Monedas: ${coinsCount}`;
-      document.getElementById('gameover-screen').classList.remove('hidden');
-    }
-
-    function showRewardedAd() {
-      document.getElementById('gameover-screen').classList.add('hidden');
-      const adModal = document.getElementById('ad-modal');
-      adModal.classList.remove('hidden');
-
-      let timeLeft = 3;
-      const timerEl = document.getElementById('ad-timer-text');
-      timerEl.innerText = `Reanudando en ${timeLeft}s...`;
-
-      const interval = setInterval(() => {
-        timeLeft--;
-        if (timeLeft > 0) {
-          timerEl.innerText = `Reanudando en ${timeLeft}s...`;
-        } else {
-          clearInterval(interval);
-          adModal.classList.add('hidden');
-          revivePlayer();
-        }
-      }, 1000);
-    }
-
-    function revivePlayer() {
-      obstacles.forEach(o => {
-        if (o.position.z > -18 && o.position.z < 10) {
-          scene.remove(o);
-        }
-      });
-      obstacles = obstacles.filter(o => !(o.position.z > -18 && o.position.z < 10));
-
-      playerGroup.position.set(LANES[currentLane], 0, 0);
-      isJumping = false;
-      isSliding = false;
-      isPlaying = true;
-    }
-
-    function update() {
-      if (!isPlaying) return;
-
-      distance += speed * 0.5;
-      speed = Math.min(maxSpeed, speed + 0.0001);
-      document.getElementById('score-dist').innerText = `${Math.floor(distance)}m`;
-      document.getElementById('score-coins').innerText = coinsCount;
-
-      playerGroup.position.x += (LANES[currentLane] - playerGroup.position.x) * 0.22;
-
-      // Físicas de Salto
-      if (isJumping) {
-        playerGroup.position.y += jumpVelocity;
-        jumpVelocity -= gravity * 0.035;
-        if (playerGroup.position.y <= 0) {
-          playerGroup.position.y = 0;
-          isJumping = false;
+    function generateBaseIsland() {
+      for (let x = -7; x <= 7; x++) {
+        for (let z = -7; z <= 7; z++) {
+          addBlock(x * blockSize, 0, z * blockSize, 1, false);
+          addBlock(x * blockSize, -blockSize, z * blockSize, 2, false);
+          addBlock(x * blockSize, -blockSize * 2, z * blockSize, 3, false);
         }
       }
-
-      // Animación de carrera para Ale
-      if (!isJumping && !isSliding) {
-        playerSprite.position.y = 1.35 + Math.abs(Math.sin(Date.now() * 0.015)) * 0.12;
-      }
-
-      // Desplazamiento de edificios
-      buildings.forEach(b => {
-        b.position.z += speed * 0.4;
-        if (b.position.z > 15) {
-          b.position.z = -140;
+      // Árbol clásico estilo Minecraft
+      for (let y = 1; y <= 4; y++) addBlock(0, y * blockSize, 0, 4, false);
+      for (let ox = -1; ox <= 1; ox++) {
+        for (let oz = -1; oz <= 1; oz++) {
+          addBlock(ox * blockSize, 4 * blockSize, oz * blockSize, 5, false);
+          addBlock(ox * blockSize, 5 * blockSize, oz * blockSize, 5, false);
         }
-      });
+      }
+      autoSaveWorld();
+    }
 
-      // Movimiento de obstáculos
-      for (let i = obstacles.length - 1; i >= 0; i--) {
-        const obs = obstacles[i];
-        obs.position.z += speed;
+    function autoSaveWorld() {
+      localStorage.setItem('alecraft_mc_save', JSON.stringify(blocks));
+      triggerAutosaveIndicator();
+    }
 
-        const dx = Math.abs(playerGroup.position.x - obs.position.x);
-        const dz = Math.abs(playerGroup.position.z - obs.position.z);
+    function setupEvents() {
+      window.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('#hotbar, #action-panel, #yt-player-box, #mobile-controls, #btn-back-hub, #skin-selector')) return;
 
-        if (dx < 0.75 && dz < 0.8) {
-          const isOverObstacle = playerGroup.position.y > (obs.userData.height - 0.2);
-          if (!isOverObstacle) {
-            gameOver();
-            return;
+        raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
+        const intersects = raycaster.intersectObjects(blockMeshes);
+
+        if (intersects.length > 0) {
+          const hit = intersects[0];
+          if (e.button === 2 || e.altKey) {
+            removeBlock(hit.object);
+          } else if (e.button === 0) {
+            const normal = hit.face.normal;
+            const newPos = hit.object.position.clone().add(normal.clone().multiplyScalar(blockSize));
+            addBlock(newPos.x, newPos.y, newPos.z, currentBlockType);
+
+            if (currentBlockType === 9) playSound('kick');
+            if (currentBlockType === 10) playSound('snare');
+            if (currentBlockType === 11) playSound('dembow');
+            if (currentBlockType === 12) camera.position.y += 5.0;
           }
         }
+      });
 
-        if (obs.position.z > 8) {
-          scene.remove(obs);
-          obstacles.splice(i, 1);
-          const furthestZ = obstacles.reduce((min, o) => Math.min(min, o.position.z), -50);
-          spawnObstacle(furthestZ - 15);
+      window.addEventListener('contextmenu', e => e.preventDefault());
+
+      window.addEventListener('keydown', (e) => {
+        if (e.code === 'KeyW' || e.code === 'ArrowUp') moveForward = true;
+        if (e.code === 'KeyS' || e.code === 'ArrowDown') moveBackward = true;
+        if (e.code === 'KeyA' || e.code === 'ArrowLeft') moveLeft = true;
+        if (e.code === 'KeyD' || e.code === 'ArrowRight') moveRight = true;
+        if (e.code === 'Space') camera.position.y += 0.6;
+        if (e.code === 'ShiftLeft') camera.position.y -= 0.6;
+      });
+
+      window.addEventListener('keyup', (e) => {
+        if (e.code === 'KeyW' || e.code === 'ArrowUp') moveForward = false;
+        if (e.code === 'KeyS' || e.code === 'ArrowDown') moveBackward = false;
+        if (e.code === 'KeyA' || e.code === 'ArrowLeft') moveLeft = false;
+        if (e.code === 'KeyD' || e.code === 'ArrowRight') moveRight = false;
+      });
+
+      document.getElementById('btn-fly').addEventListener('click', () => {
+        isFlyMode = !isFlyMode;
+        document.getElementById('btn-fly').innerText = `🚀 Modo Vuelo: ${isFlyMode ? 'ON' : 'OFF'}`;
+      });
+
+      document.getElementById('btn-newgame').addEventListener('click', () => {
+        if (confirm("¿Crear un NUEVO MUNDO? Se generará un terreno con árboles y comenzará el auto-guardado.")) {
+          blockMeshes.forEach(m => scene.remove(m));
+          blocks = {};
+          blockMeshes = [];
+          generateBaseIsland();
+          camera.position.set(0, 8, 14);
         }
+      });
+
+      document.getElementById('btn-save').addEventListener('click', () => {
+        autoSaveWorld();
+        alert("✅ ¡Partida guardada!");
+      });
+
+      document.getElementById('btn-export').addEventListener('click', () => {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(blocks));
+        const a = document.createElement('a');
+        a.setAttribute("href", dataStr);
+        a.setAttribute("download", `AleCraft_Mundo_${Date.now()}.json`);
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      });
+    }
+
+    function setupHotbarUI() {
+      for (let i = 1; i <= 14; i++) {
+        const el = document.getElementById(`slot-${i}`);
+        if (el && textures[i]) el.style.backgroundImage = `url(${textures[i].dataUrl})`;
       }
 
-      // Monedas giratorias
-      for (let i = coins.length - 1; i >= 0; i--) {
-        const coin = coins[i];
-        coin.position.z += speed;
-        coin.rotation.z += 0.06;
+      const slots = document.querySelectorAll('.slot');
+      slots.forEach(slot => {
+        slot.addEventListener('click', () => {
+          slots.forEach(s => s.classList.remove('active'));
+          slot.classList.add('active');
+          currentBlockType = parseInt(slot.dataset.type);
+        });
+      });
+    }
 
-        const dx = Math.abs(playerGroup.position.x - coin.position.x);
-        const dz = Math.abs(playerGroup.position.z - coin.position.z);
-        if (dx < 0.85 && dz < 0.85) {
-          coinsCount++;
-          playSound('coin');
-          scene.remove(coin);
-          coins.splice(i, 1);
-          continue;
+    function loadSavedWorld() {
+      const saved = localStorage.getItem('alecraft_mc_save');
+      if (saved) {
+        const data = JSON.parse(saved);
+        for (let k in data) {
+          const b = data[k];
+          addBlock(b.x, b.y, b.z, b.type, false);
         }
-
-        if (coin.position.z > 8) {
-          scene.remove(coin);
-          coins.splice(i, 1);
-        }
-      }
-
-      // Vallas de patrocinio
-      for (let i = billboards.length - 1; i >= 0; i--) {
-        const bb = billboards[i];
-        bb.position.z += speed;
-        if (bb.position.z > 12) {
-          scene.remove(bb);
-          billboards.splice(i, 1);
-        }
+      } else {
+        generateBaseIsland();
       }
     }
 
-    function animate() {
-      requestAnimationFrame(animate);
-      update();
-      renderer.render(scene, camera);
+    function togglePlayer() {
+      const box = document.getElementById('yt-iframe-container');
+      box.style.display = box.style.display === 'none' ? 'block' : 'none';
     }
 
-    function onWindowResize() {
+    function onResize() {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
-    window.onload = () => {
-      init();
-      animate();
-    };
+    function animate() {
+      requestAnimationFrame(animate);
+
+      direction.z = Number(moveForward) - Number(moveBackward);
+      direction.x = Number(moveRight) - Number(moveLeft);
+      direction.normalize();
+
+      if (moveForward || moveBackward) camera.translateZ(-direction.z * 0.3);
+      if (moveLeft || moveRight) camera.translateX(direction.x * 0.3);
+
+      // Posición del Avatar siguiendo al jugador
+      if (avatarMesh) {
+        avatarMesh.position.set(camera.position.x, camera.position.y - 2.8, camera.position.z - 4);
+        avatarMesh.rotation.y = camera.rotation.y;
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    // --- ESTUDIO DE DIBUJO ---
+    const drawCanvas = document.getElementById('paint-canvas');
+    const drawCtx = drawCanvas.getContext('2d');
+    let isDrawing = false;
+    let currentColor = '#000000';
+
+    function launchDrawStudio() {
+      document.getElementById('hub-screen').style.display = 'none';
+      document.getElementById('draw-screen').style.display = 'flex';
+      const savedDrawing = localStorage.getItem('alegameland_saved_drawing');
+      if (savedDrawing) {
+        const img = new Image();
+        img.onload = () => { drawCtx.drawImage(img, 0, 0); };
+        img.src = savedDrawing;
+      } else {
+        drawCtx.fillStyle = '#ffffff';
+        drawCtx.fillRect(0, 0, drawCanvas.width, drawCanvas.height);
+      }
+    }
+
+    function backToHubFromDraw() {
+      document.getElementById('draw-screen').style.display = 'none';
+      document.getElementById('hub-screen').style.display = 'flex';
+    }
+
+    function setDrawColor(color) { currentColor = color; }
+
+    function newDrawingGame() {
+      if (confirm("¿Iniciar un NUEVO LIENZO?")) {
+        drawCtx.fillStyle = '#ffffff';
+        drawCtx.fillRect(0, 0, drawCanvas.width, drawCanvas.height);
+        localStorage.removeItem('alegameland_saved_drawing');
+      }
+    }
+
+    function saveDrawing() {
+      const link = document.createElement('a');
+      link.download = `AleGameLand_Arte_${Date.now()}.png`;
+      link.href = drawCanvas.toDataURL();
+      link.click();
+    }
+
+    function autoSaveDrawing() {
+      localStorage.setItem('alegameland_saved_drawing', drawCanvas.toDataURL());
+    }
+
+    function getCoords(e) {
+      const rect = drawCanvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    function startDraw(e) {
+      isDrawing = true;
+      const { x, y } = getCoords(e);
+      drawCtx.beginPath();
+      drawCtx.moveTo(x, y);
+    }
+
+    function draw(e) {
+      if (!isDrawing) return;
+      const { x, y } = getCoords(e);
+      drawCtx.lineWidth = 6;
+      drawCtx.lineCap = 'round';
+      drawCtx.strokeStyle = currentColor;
+      drawCtx.lineTo(x, y);
+      drawCtx.stroke();
+    }
+
+    function stopDraw() { 
+      if (isDrawing) {
+        isDrawing = false;
+        autoSaveDrawing();
+      }
+    }
+
+    drawCanvas.addEventListener('mousedown', startDraw);
+    drawCanvas.addEventListener('mousemove', draw);
+    drawCanvas.addEventListener('mouseup', stopDraw);
+    drawCanvas.addEventListener('touchstart', startDraw);
+    drawCanvas.addEventListener('touchmove', draw);
+    drawCanvas.addEventListener('touchend', stopDraw);
   </script>
 </body>
 </html>
