@@ -195,7 +195,7 @@
       padding: 20px;
     }
 
-    /* --- MODO VOXEL MEJORADO --- */
+    /* --- MODO VOXEL MEJORADO (CYBER BUILDER) --- */
     #game-wrapper {
       position: absolute;
       top: 0;
@@ -205,6 +205,25 @@
       display: none;
     }
     #canvas-container { width: 100%; height: 100%; }
+
+    #crosshair {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 18px;
+      height: 18px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 10;
+    }
+    #crosshair::before, #crosshair::after {
+      content: '';
+      position: absolute;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 0 2px #000;
+    }
+    #crosshair::before { top: 7px; left: 0; width: 18px; height: 4px; }
+    #crosshair::after { top: 0; left: 7px; width: 4px; height: 18px; }
 
     #autosave-indicator {
       position: absolute;
@@ -331,49 +350,29 @@
       cursor: pointer;
     }
 
-    /* Joystick Táctil y Botones */
-    #touch-joystick-area {
+    #mobile-controls {
       position: absolute;
       bottom: 80px;
-      left: 20px;
-      width: 100px;
-      height: 100px;
-      background: rgba(255, 255, 255, 0.1);
+      width: 100vw;
+      display: none;
+      justify-content: space-between;
+      padding: 0 25px;
+      pointer-events: none;
+      z-index: 15;
+    }
+    .touch-btn {
+      width: 60px;
+      height: 60px;
+      background: rgba(0, 0, 0, 0.65);
       border: 2px solid #00f0ff;
-      border-radius: 50%;
-      display: none;
-      z-index: 20;
-    }
-    #touch-joystick-knob {
-      position: absolute;
-      top: 25px;
-      left: 25px;
-      width: 50px;
-      height: 50px;
-      background: #00f0ff;
-      border-radius: 50%;
-    }
-    #touch-action-buttons {
-      position: absolute;
-      bottom: 80px;
-      right: 20px;
-      display: none;
-      flex-direction: column;
-      gap: 10px;
-      z-index: 20;
-    }
-    .craft-touch-btn {
-      width: 55px;
-      height: 55px;
-      background: rgba(15, 23, 42, 0.85);
-      border: 2px solid #39ff14;
-      border-radius: 50%;
+      border-radius: 12px;
       color: #fff;
       font-weight: 900;
       font-size: 11px;
       display: flex;
       align-items: center;
       justify-content: center;
+      pointer-events: auto;
     }
 
     /* --- ESTUDIO DE DIBUJO --- */
@@ -442,9 +441,9 @@
 
       <div class="game-card" onclick="launchGame('craft')">
         <div>
-          <span class="card-tag" style="background: #15803d; color: #fff;">Voxel 3D + Control Libre</span>
+          <span class="card-tag" style="background: #15803d; color: #fff;">Voxel 3D + Minecraft</span>
           <h2 class="card-title">Cyber Builder 3D</h2>
-          <p class="card-desc">Camina libremente con tu avatar en 3ra persona, coloca bloques guiados por holograma y construye con diamantes y música DJ.</p>
+          <p class="card-desc">Construye mundos en 3D con diamantes, oro, hojas, selector de skins en tiempo real y auto-guardado.</p>
         </div>
         <button class="card-btn">ENTRAR A CONSTRUIR</button>
       </div>
@@ -490,10 +489,11 @@
     </div>
   </div>
 
-  <!-- ================= MODO VOXEL MEJORADO (CYBER BUILDER 3D) ================= -->
+  <!-- ================= MODO VOXEL (CYBER BUILDER 3D) ================= -->
   <div id="game-wrapper">
     <button class="btn-back-hub-global" onclick="backToHub()">◀ Menú Principal</button>
     <div id="canvas-container"></div>
+    <div id="crosshair"></div>
     <div id="autosave-indicator">💾 Auto-guardado</div>
 
     <!-- Selector de Skins -->
@@ -543,14 +543,10 @@
       <div class="slot" id="slot-14" data-type="14" title="Tu Revista PR">14</div>
     </div>
 
-    <!-- Controles Táctiles Móviles para Construcción -->
-    <div id="touch-joystick-area">
-      <div id="touch-joystick-knob"></div>
-    </div>
-    <div id="touch-action-buttons">
-      <div class="craft-touch-btn" id="btn-touch-place">PONER</div>
-      <div class="craft-touch-btn" id="btn-touch-mine" style="border-color:#ff0055;">MINAR</div>
-      <div class="craft-touch-btn" id="btn-touch-jump">SALTO</div>
+    <div id="mobile-controls">
+      <div class="touch-btn" id="btn-craft-mine" style="border-color: #ff3366;">MINAR</div>
+      <div class="touch-btn" id="btn-craft-jump">SALTO</div>
+      <div class="touch-btn" id="btn-craft-place" style="border-color: #39ff14;">COLOCAR</div>
     </div>
   </div>
 
@@ -631,7 +627,7 @@
       }
     }
 
-    // --- TEXTURAS & SPRITE RUNNER ORIGINAL ---
+    // --- SPRITE RUNNER ORIGINAL ---
     function createAleCharacterTexture() {
       const canvas = document.createElement('canvas');
       canvas.width = 256; canvas.height = 384;
@@ -737,6 +733,7 @@
         initRunnerOriginal();
         isRunnerInitialized = true;
       }
+      onResizeRunner();
       startRunner();
     }
 
@@ -994,12 +991,13 @@
     }
 
     function onResizeRunner() {
+      if (!runnerCamera || !runnerRenderer) return;
       runnerCamera.aspect = window.innerWidth / window.innerHeight;
       runnerCamera.updateProjectionMatrix();
       runnerRenderer.setSize(window.innerWidth, window.innerHeight);
     }
 
-    // --- MODO CONSTRUCCIÓN VOXEL MEJORADO (CYBER BUILDER 3D) ---
+    // --- MODO CONSTRUCCIÓN VOXEL (CYBER BUILDER 3D) ---
     function generateVoxelTexture(type) {
       const canvas = document.createElement('canvas');
       canvas.width = 16; canvas.height = 16;
@@ -1087,65 +1085,9 @@
     let isFlyMode = false;
     let isCraftInitialized = false;
 
-    // Avatar y Físicas
-    let playerAvatar, armL, armR, legL, legR;
-    let playerPos = new THREE.Vector3(0, 2, 0);
-    let playerVelocity = new THREE.Vector3();
-    let playerYaw = 0;
-    let isGrounded = false;
     let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false;
-
-    // Caja Holográfica Guía de Bloque
-    let highlightBox;
-    let currentTargetFace = null;
-    let currentTargetBlock = null;
-
-    function createAvatarMesh() {
-      if (playerAvatar) craftScene.remove(playerAvatar);
-      playerAvatar = new THREE.Group();
-
-      let headCol = 0xf0be92, bodyCol = 0x111218;
-      if (currentSkin === 'dj') bodyCol = 0xff0055;
-      if (currentSkin === 'creeper') { headCol = 0x39ff14; bodyCol = 0x22c55e; }
-      if (currentSkin === 'knight') { headCol = 0x64748b; bodyCol = 0x334155; }
-
-      // Cabeza
-      const head = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), new THREE.MeshLambertMaterial({ color: headCol }));
-      head.position.y = 1.6;
-      playerAvatar.add(head);
-
-      // Cuerpo
-      const body = new THREE.Mesh(new THREE.BoxGeometry(0.9, 1.1, 0.5), new THREE.MeshLambertMaterial({ color: bodyCol }));
-      body.position.y = 0.7;
-      playerAvatar.add(body);
-
-      // Brazos
-      armL = new THREE.Mesh(new THREE.BoxGeometry(0.3, 1.0, 0.3), new THREE.MeshLambertMaterial({ color: bodyCol }));
-      armL.position.set(-0.65, 0.7, 0);
-      armR = new THREE.Mesh(new THREE.BoxGeometry(0.3, 1.0, 0.3), new THREE.MeshLambertMaterial({ color: bodyCol }));
-      armR.position.set(0.65, 0.7, 0);
-      playerAvatar.add(armL);
-      playerAvatar.add(armR);
-
-      // Piernas
-      const legMat = new THREE.MeshLambertMaterial({ color: 0x1e293b });
-      legL = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.8, 0.35), legMat);
-      legL.position.set(-0.25, -0.2, 0);
-      legR = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.8, 0.35), legMat);
-      legR.position.set(0.25, -0.2, 0);
-      playerAvatar.add(legL);
-      playerAvatar.add(legR);
-
-      craftScene.add(playerAvatar);
-    }
-
-    function setSkin(skinName) {
-      currentSkin = skinName;
-      localStorage.setItem('alecraft_skin', skinName);
-      document.querySelectorAll('.skin-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
-      createAvatarMesh();
-    }
+    let craftDirection = new THREE.Vector3();
+    let currentSkin = 'cibernauta';
 
     function launchGame(mode) {
       document.getElementById('hub-screen').style.display = 'none';
@@ -1154,6 +1096,7 @@
         initThreeCraft();
         isCraftInitialized = true;
       }
+      onResizeCraft();
     }
 
     function backToHub() {
@@ -1169,11 +1112,13 @@
 
     function initThreeCraft() {
       const container = document.getElementById('canvas-container');
+
       craftScene = new THREE.Scene();
       craftScene.background = new THREE.Color(0x78a7ff);
       craftScene.fog = new THREE.Fog(0x78a7ff, 40, 120);
 
-      craftCamera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
+      craftCamera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+      craftCamera.position.set(0, 8, 14);
 
       craftRenderer = new THREE.WebGLRenderer({ antialias: false });
       craftRenderer.setSize(window.innerWidth, window.innerHeight);
@@ -1186,22 +1131,12 @@
 
       craftRaycaster = new THREE.Raycaster();
 
-      // Caja guía de colocación holográfica
-      const hGeo = new THREE.BoxGeometry(blockSize + 0.05, blockSize + 0.05, blockSize + 0.05);
-      const hMat = new THREE.MeshBasicMaterial({ color: 0x39ff14, wireframe: true });
-      highlightBox = new THREE.Mesh(hGeo, hMat);
-      highlightBox.visible = false;
-      craftScene.add(highlightBox);
-
-      createAvatarMesh();
       loadSavedWorld();
       setupCraftEvents();
       setupHotbarUI();
 
       if ('ontouchstart' in window) {
-        document.getElementById('touch-joystick-area').style.display = 'block';
-        document.getElementById('touch-action-buttons').style.display = 'flex';
-        setupTouchControls();
+        document.getElementById('mobile-controls').style.display = 'flex';
       }
 
       window.addEventListener('resize', onResizeCraft);
@@ -1237,8 +1172,8 @@
     }
 
     function generateBaseIsland() {
-      for (let x = -8; x <= 8; x++) {
-        for (let z = -8; z <= 8; z++) {
+      for (let x = -7; x <= 7; x++) {
+        for (let z = -7; z <= 7; z++) {
           addBlock(x * blockSize, 0, z * blockSize, 1, false);
           addBlock(x * blockSize, -blockSize, z * blockSize, 2, false);
           addBlock(x * blockSize, -blockSize * 2, z * blockSize, 3, false);
@@ -1251,7 +1186,6 @@
           addBlock(ox * blockSize, 5 * blockSize, oz * blockSize, 5, false);
         }
       }
-      playerPos.set(0, 4, 6);
       autoSaveWorld();
     }
 
@@ -1260,22 +1194,32 @@
       triggerAutosaveIndicator();
     }
 
-    function setupCraftEvents() {
-      // Ratón / Pointer para colocar y minar
-      window.addEventListener('pointerdown', (e) => {
-        if (e.target.closest('#hotbar, #action-panel, #yt-player-box, .btn-back-hub-global, #skin-selector, #touch-joystick-area, #touch-action-buttons')) return;
+    function setSkin(skinName) {
+      currentSkin = skinName;
+      document.querySelectorAll('.skin-btn').forEach(btn => btn.classList.remove('active'));
+      if (event && event.target) event.target.classList.add('active');
+    }
 
-        if (currentTargetBlock) {
+    function setupCraftEvents() {
+      window.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('#hotbar, #action-panel, #yt-player-box, #mobile-controls, .btn-back-hub-global, #skin-selector')) return;
+
+        craftRaycaster.setFromCamera(new THREE.Vector2(0, 0), craftCamera);
+        const intersects = craftRaycaster.intersectObjects(blockMeshes);
+
+        if (intersects.length > 0) {
+          const hit = intersects[0];
           if (e.button === 2 || e.altKey) {
-            removeBlock(currentTargetBlock);
-          } else if (e.button === 0 && currentTargetFace) {
-            const newPos = currentTargetBlock.position.clone().add(currentTargetFace.normal.clone().multiplyScalar(blockSize));
+            removeBlock(hit.object);
+          } else if (e.button === 0) {
+            const normal = hit.face.normal;
+            const newPos = hit.object.position.clone().add(normal.clone().multiplyScalar(blockSize));
             addBlock(newPos.x, newPos.y, newPos.z, currentBlockType);
 
             if (currentBlockType === 9) playSound('kick');
             if (currentBlockType === 10) playSound('snare');
             if (currentBlockType === 11) playSound('dembow');
-            if (currentBlockType === 12) playerVelocity.y = 0.6;
+            if (currentBlockType === 12) craftCamera.position.y += 5.0;
           }
         }
       });
@@ -1287,11 +1231,8 @@
         if (e.code === 'KeyS' || e.code === 'ArrowDown') moveBackward = true;
         if (e.code === 'KeyA' || e.code === 'ArrowLeft') moveLeft = true;
         if (e.code === 'KeyD' || e.code === 'ArrowRight') moveRight = true;
-        if (e.code === 'Space') {
-          if (isFlyMode) playerPos.y += 0.6;
-          else if (isGrounded) { playerVelocity.y = 0.35; isGrounded = false; playSound('jump'); }
-        }
-        if (e.code === 'ShiftLeft' && isFlyMode) playerPos.y -= 0.6;
+        if (e.code === 'Space') craftCamera.position.y += 0.6;
+        if (e.code === 'ShiftLeft') craftCamera.position.y -= 0.6;
       });
 
       window.addEventListener('keyup', (e) => {
@@ -1299,6 +1240,30 @@
         if (e.code === 'KeyS' || e.code === 'ArrowDown') moveBackward = false;
         if (e.code === 'KeyA' || e.code === 'ArrowLeft') moveLeft = false;
         if (e.code === 'KeyD' || e.code === 'ArrowRight') moveRight = false;
+      });
+
+      // Controles Táctiles de Construcción
+      document.getElementById('btn-craft-place').addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        craftRaycaster.setFromCamera(new THREE.Vector2(0, 0), craftCamera);
+        const intersects = craftRaycaster.intersectObjects(blockMeshes);
+        if (intersects.length > 0) {
+          const hit = intersects[0];
+          const newPos = hit.object.position.clone().add(hit.face.normal.clone().multiplyScalar(blockSize));
+          addBlock(newPos.x, newPos.y, newPos.z, currentBlockType);
+        }
+      });
+
+      document.getElementById('btn-craft-mine').addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        craftRaycaster.setFromCamera(new THREE.Vector2(0, 0), craftCamera);
+        const intersects = craftRaycaster.intersectObjects(blockMeshes);
+        if (intersects.length > 0) removeBlock(intersects[0].object);
+      });
+
+      document.getElementById('btn-craft-jump').addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        craftCamera.position.y += 1.2;
       });
 
       document.getElementById('btn-fly').addEventListener('click', () => {
@@ -1311,6 +1276,7 @@
           blockMeshes.forEach(m => craftScene.remove(m));
           blocks = {}; blockMeshes = [];
           generateBaseIsland();
+          craftCamera.position.set(0, 8, 14);
         }
       });
 
@@ -1327,29 +1293,12 @@
       });
     }
 
-    function setupTouchControls() {
-      document.getElementById('btn-touch-place').addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        if (currentTargetBlock && currentTargetFace) {
-          const newPos = currentTargetBlock.position.clone().add(currentTargetFace.normal.clone().multiplyScalar(blockSize));
-          addBlock(newPos.x, newPos.y, newPos.z, currentBlockType);
-        }
-      });
-      document.getElementById('btn-touch-mine').addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        if (currentTargetBlock) removeBlock(currentTargetBlock);
-      });
-      document.getElementById('btn-touch-jump').addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        if (isGrounded) { playerVelocity.y = 0.35; isGrounded = false; playSound('jump'); }
-      });
-    }
-
     function setupHotbarUI() {
       for (let i = 1; i <= 14; i++) {
         const el = document.getElementById(`slot-${i}`);
         if (el && voxelTextures[i]) el.style.backgroundImage = `url(${voxelTextures[i].dataUrl})`;
       }
+
       const slots = document.querySelectorAll('.slot');
       slots.forEach(slot => {
         slot.addEventListener('click', () => {
@@ -1368,7 +1317,6 @@
           const b = data[k];
           addBlock(b.x, b.y, b.z, b.type, false);
         }
-        playerPos.set(0, 4, 6);
       } else {
         generateBaseIsland();
       }
@@ -1380,6 +1328,7 @@
     }
 
     function onResizeCraft() {
+      if (!craftCamera || !craftRenderer) return;
       craftCamera.aspect = window.innerWidth / window.innerHeight;
       craftCamera.updateProjectionMatrix();
       craftRenderer.setSize(window.innerWidth, window.innerHeight);
@@ -1388,68 +1337,14 @@
     function animateCraft() {
       requestAnimationFrame(animateCraft);
 
-      // Movimiento con Físicas del Avatar
-      const moveSpeed = 0.18;
-      let isMoving = false;
-      let moveX = 0, moveZ = 0;
+      craftDirection.z = Number(moveForward) - Number(moveBackward);
+      craftDirection.x = Number(moveRight) - Number(moveLeft);
+      craftDirection.normalize();
 
-      if (moveForward) { moveZ -= moveSpeed; isMoving = true; }
-      if (moveBackward) { moveZ += moveSpeed; isMoving = true; }
-      if (moveLeft) { moveX -= moveSpeed; isMoving = true; }
-      if (moveRight) { moveX += moveSpeed; isMoving = true; }
+      if (moveForward || moveBackward) craftCamera.translateZ(-craftDirection.z * 0.3);
+      if (moveLeft || moveRight) craftCamera.translateX(craftDirection.x * 0.3);
 
-      if (isMoving) {
-        playerPos.x += moveX;
-        playerPos.z += moveZ;
-        playerAvatar.rotation.y = Math.atan2(moveX, moveZ);
-      }
-
-      // Gravedad
-      if (!isFlyMode) {
-        playerVelocity.y -= 0.018;
-        playerPos.y += playerVelocity.y;
-        if (playerPos.y <= 1.8) {
-          playerPos.y = 1.8;
-          playerVelocity.y = 0;
-          isGrounded = true;
-        }
-      }
-
-      // Animación de caminata del muñeco
-      if (playerAvatar) {
-        playerAvatar.position.copy(playerPos);
-        if (isMoving) {
-          const walkTime = Date.now() * 0.012;
-          legL.rotation.x = Math.sin(walkTime) * 0.6;
-          legR.rotation.x = -Math.sin(walkTime) * 0.6;
-          armL.rotation.x = -Math.sin(walkTime) * 0.6;
-          armR.rotation.x = Math.sin(walkTime) * 0.6;
-        } else {
-          legL.rotation.x = 0; legR.rotation.x = 0;
-          armL.rotation.x = 0; armR.rotation.x = 0;
-        }
-      }
-
-      // Cámara en 3ra Persona Suave
-      craftCamera.position.set(playerPos.x, playerPos.y + 3.8, playerPos.z + 7.5);
-      craftCamera.lookAt(playerPos.x, playerPos.y + 1.2, playerPos.z);
-
-      // Raycast para apuntar bloques y mostrar la caja holográfica guía
-      craftRaycaster.setFromCamera(new THREE.Vector2(0, 0), craftCamera);
-      const intersects = craftRaycaster.intersectObjects(blockMeshes);
-
-      if (intersects.length > 0 && intersects[0].distance < 24) {
-        currentTargetBlock = intersects[0].object;
-        currentTargetFace = intersects[0].face;
-        highlightBox.position.copy(currentTargetBlock.position);
-        highlightBox.visible = true;
-      } else {
-        currentTargetBlock = null;
-        currentTargetFace = null;
-        highlightBox.visible = false;
-      }
-
-      craftRenderer.render(craftScene, craftCamera);
+      if (craftRenderer) craftRenderer.render(craftScene, craftCamera);
     }
 
     // --- ESTUDIO DE DIBUJO ---
