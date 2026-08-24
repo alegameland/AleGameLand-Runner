@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Ale Game Land - Subway Runner 3D</title>
+  <title>Ale Game Land - Subway Runner 3D HD</title>
 
   <style>
     * {
@@ -14,7 +14,7 @@
       -webkit-user-select: none;
     }
     body {
-      background-color: #080914;
+      background-color: #04050d;
       overflow: hidden;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       color: #fff;
@@ -27,7 +27,7 @@
       height: 100vh;
     }
     
-    /* HUD Superior */
+    /* HUD Superior de Neón */
     #hud {
       position: absolute;
       top: 15px;
@@ -40,52 +40,55 @@
       z-index: 10;
     }
     .hud-box {
-      background: rgba(15, 23, 42, 0.85);
+      background: rgba(10, 15, 30, 0.88);
       border: 2px solid #00f0ff;
-      border-radius: 12px;
-      padding: 8px 16px;
-      box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+      border-radius: 14px;
+      padding: 8px 18px;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.5), inset 0 0 10px rgba(0, 240, 255, 0.2);
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
     .hud-title {
       font-size: 11px;
       text-transform: uppercase;
       color: #39ff14;
       font-weight: 800;
+      letter-spacing: 1px;
     }
     .hud-value {
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 900;
       color: #ffffff;
+      text-shadow: 0 0 10px #00f0ff;
     }
     .coin-icon {
-      width: 20px;
-      height: 20px;
-      background: #ffd700;
+      width: 22px;
+      height: 22px;
+      background: radial-gradient(circle, #fff7ad 0%, #ffd700 60%, #b8860b 100%);
       border-radius: 50%;
-      border: 2px solid #b8860b;
-      box-shadow: 0 0 8px #ffd700;
+      border: 2px solid #fff;
+      box-shadow: 0 0 12px #ffd700;
     }
 
-    /* Espacio para Banner de Anuncios inferior */
+    /* Banner Inferior */
     #ad-banner-bottom {
       position: absolute;
       bottom: 0;
       left: 0;
       width: 100vw;
-      height: 50px;
-      background: rgba(0, 0, 0, 0.85);
-      border-top: 1px solid #39ff14;
+      height: 48px;
+      background: rgba(4, 6, 15, 0.95);
+      border-top: 2px solid #39ff14;
       display: flex;
       justify-content: center;
       align-items: center;
       z-index: 15;
-      font-size: 13px;
-      color: #888;
+      font-size: 12px;
+      color: #00f0ff;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
+      font-weight: 700;
     }
 
     /* Pantallas de Menú y Game Over */
@@ -95,8 +98,8 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(8, 10, 22, 0.92);
-      backdrop-filter: blur(8px);
+      background: radial-gradient(circle, rgba(15, 20, 45, 0.94) 0%, rgba(5, 6, 15, 0.98) 100%);
+      backdrop-filter: blur(10px);
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -106,26 +109,28 @@
       text-align: center;
     }
     .game-title {
-      font-size: 36px;
+      font-size: 40px;
       font-weight: 900;
       color: #39ff14;
-      text-shadow: 0 0 20px #39ff14, 0 0 35px #00f0ff;
+      text-shadow: 0 0 20px #39ff14, 0 0 40px #00f0ff;
       text-transform: uppercase;
-      margin-bottom: 5px;
+      letter-spacing: 2px;
+      margin-bottom: 4px;
     }
     .subtitle {
       font-size: 14px;
       color: #00f0ff;
-      letter-spacing: 3px;
+      letter-spacing: 4px;
       margin-bottom: 25px;
       font-weight: bold;
+      text-shadow: 0 0 10px #00f0ff;
     }
     .btn-group {
       display: flex;
       flex-direction: column;
       gap: 12px;
       width: 100%;
-      max-width: 290px;
+      max-width: 300px;
     }
     .btn {
       background: linear-gradient(45deg, #00f0ff, #39ff14);
@@ -137,39 +142,45 @@
       font-weight: 900;
       cursor: pointer;
       text-transform: uppercase;
-      box-shadow: 0 0 20px rgba(57, 255, 20, 0.5);
-      transition: transform 0.15s ease;
+      box-shadow: 0 0 25px rgba(57, 255, 20, 0.6);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
     .btn-secondary {
       background: linear-gradient(45deg, #ff007f, #7928ca);
       color: #fff;
-      box-shadow: 0 0 20px rgba(255, 0, 127, 0.5);
+      box-shadow: 0 0 25px rgba(255, 0, 127, 0.6);
     }
     .btn-yt {
-      background: #ff0000;
+      background: linear-gradient(45deg, #ff0000, #b30000);
       color: #ffffff;
       font-size: 15px;
-      box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
       padding: 12px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-fb {
+      background: linear-gradient(45deg, #1877f2, #0d52a8);
+      color: #ffffff;
+      font-size: 15px;
+      box-shadow: 0 0 20px rgba(24, 119, 242, 0.6);
+      padding: 12px 20px;
+      text-decoration: none;
+      display: inline-block;
     }
     .btn:active {
       transform: scale(0.96);
     }
     .instructions {
-      margin-top: 20px;
-      font-size: 12px;
+      margin-top: 22px;
+      font-size: 13px;
       color: #94a3b8;
-      line-height: 1.5;
+      line-height: 1.6;
     }
     .hidden {
       display: none !important;
     }
 
-    /* Modal de Anuncio */
     #ad-modal {
       position: absolute;
       top: 0;
@@ -185,9 +196,10 @@
       color: #fff;
     }
     .ad-timer {
-      font-size: 16px;
+      font-size: 18px;
       color: #39ff14;
       margin-top: 15px;
+      font-weight: bold;
     }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -214,7 +226,7 @@
 
   <!-- Banner Inferior -->
   <div id="ad-banner-bottom">
-    <span>Espacio Publicitario H5 Ads / AdSense</span>
+    <span>TU REVISTA DIGITAL PR • ALE GAME LAND</span>
   </div>
 
   <!-- Menú de Inicio -->
@@ -224,23 +236,27 @@
     <div class="btn-group">
       <button id="btn-start" class="btn">¡JUGAR AHORA!</button>
       <button class="btn btn-yt" onclick="window.open('https://youtube.com/@alegameland?si=rcF-LK4YSlY9AOJ2', '_blank')">
-        ▶ Suscribirse al Canal
+        ▶ Canal de YouTube
+      </button>
+      <button class="btn btn-fb" onclick="window.open('https://www.facebook.com/share/1DWVyQuXK1/', '_blank')">
+        👍 Página de Facebook
       </button>
     </div>
     <div class="instructions">
-      🎮 Desliza en pantalla o usa Flechas / W-A-S-D para esquivar y saltar
+      🎮 <b>PC:</b> Flechas / WASD para moverte y saltar<br />
+      📱 <b>Móvil:</b> Desliza el dedo en pantalla
     </div>
   </div>
 
   <!-- Pantalla de Game Over -->
   <div id="gameover-screen" class="overlay-screen hidden">
-    <h1 class="game-title" style="color: #ff3366; text-shadow: 0 0 20px #ff3366;">¡FIN DEL JUEGO!</h1>
+    <h1 class="game-title" style="color: #ff3366; text-shadow: 0 0 25px #ff3366;">¡FIN DEL JUEGO!</h1>
     <p class="subtitle" id="final-stats">Distancia: 0m | Monedas: 0</p>
     <div class="btn-group">
       <button id="btn-reward-ad" class="btn btn-secondary">📺 Ver Video (+1 Vida)</button>
       <button id="btn-restart" class="btn">Reintentar</button>
-      <button class="btn btn-yt" onclick="window.open('https://youtube.com/@alegameland?si=rcF-LK4YSlY9AOJ2', '_blank')">
-        ▶ Ver Ale Game Land
+      <button class="btn btn-fb" onclick="window.open('https://www.facebook.com/share/1DWVyQuXK1/', '_blank')">
+        📸 Deja tu Récord en Facebook
       </button>
     </div>
   </div>
@@ -248,8 +264,8 @@
   <!-- Modal de Anuncio -->
   <div id="ad-modal" class="hidden">
     <h2 style="color: #00f0ff; margin-bottom: 10px;">ANUNCIO PATROCINADO</h2>
-    <p>Gracias por apoyar a <b>Ale Game Land</b></p>
-    <div class="ad-timer" id="ad-timer-text">Reanudando juego en 3s...</div>
+    <p>Apoyando a <b>Tu Revista Digital PR</b> & <b>Ale Game Land</b></p>
+    <div class="ad-timer" id="ad-timer-text">Reanudando en 3s...</div>
   </div>
 
   <script>
@@ -259,19 +275,22 @@
     let isSliding = false;
     let jumpVelocity = 0;
     const gravity = 0.55;
-    let speed = 0.45;
-    const maxSpeed = 1.1;
+    let speed = 0.5;
+    const maxSpeed = 1.25;
 
     let distance = 0;
     let coinsCount = 0;
     let isPlaying = false;
 
     let scene, camera, renderer;
-    let player, bodyMesh;
+    let playerGroup, playerSprite;
     let obstacles = [];
     let coins = [];
     let billboards = [];
+    let buildings = [];
+    let particles;
 
+    // SFX Sintetizado
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     let audioCtx;
 
@@ -290,21 +309,146 @@
         osc.start();
         osc.stop(audioCtx.currentTime + 0.25);
       } else if (type === 'jump') {
-        osc.frequency.setValueAtTime(240, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(580, audioCtx.currentTime + 0.15);
-        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+        osc.frequency.setValueAtTime(250, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(650, audioCtx.currentTime + 0.16);
+        gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.16);
         osc.start();
-        osc.stop(audioCtx.currentTime + 0.15);
+        osc.stop(audioCtx.currentTime + 0.16);
       } else if (type === 'hit') {
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(110, audioCtx.currentTime);
-        osc.frequency.linearRampToValueAtTime(30, audioCtx.currentTime + 0.3);
-        gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+        osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+        osc.frequency.linearRampToValueAtTime(30, audioCtx.currentTime + 0.35);
+        gain.gain.setValueAtTime(0.45, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
         osc.start();
-        osc.stop(audioCtx.currentTime + 0.3);
+        osc.stop(audioCtx.currentTime + 0.35);
       }
+    }
+
+    // --- GENERADOR DE AVATAR DE ALE (CANVAS HD) ---
+    function createAleCharacterTexture() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 256;
+      canvas.height = 384;
+      const ctx = canvas.getContext('2d');
+
+      // Sombra base
+      ctx.fillStyle = 'rgba(0,0,0,0.3)';
+      ctx.beginPath();
+      ctx.ellipse(128, 360, 50, 15, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Zapatillas Urbanas (Negro / Rojo / Neón)
+      ctx.fillStyle = '#ff0055';
+      ctx.fillRect(80, 310, 36, 45);
+      ctx.fillRect(140, 310, 36, 45);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(80, 345, 36, 12);
+      ctx.fillRect(140, 345, 36, 12);
+
+      // Pantalón Cargo Oscuro
+      ctx.fillStyle = '#1e2029';
+      ctx.fillRect(85, 220, 30, 95);
+      ctx.fillRect(141, 220, 30, 95);
+
+      // Sudadera Negra con Camo Verde Neón (Ale Game Land)
+      ctx.fillStyle = '#111218';
+      ctx.beginPath();
+      ctx.roundRect(65, 120, 126, 110, 16);
+      ctx.fill();
+
+      // Franjas Verdes Neón
+      ctx.fillStyle = '#39ff14';
+      ctx.fillRect(65, 155, 126, 22);
+      ctx.fillRect(65, 190, 126, 10);
+
+      // Texto de Sudadera
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '900 13px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('ALE GAME LAND', 128, 172);
+
+      // Brazos
+      ctx.fillStyle = '#111218';
+      ctx.fillRect(42, 130, 25, 75);
+      ctx.fillRect(189, 130, 25, 75);
+      ctx.fillStyle = '#f0be92'; // Manos
+      ctx.beginPath();
+      ctx.arc(54, 210, 12, 0, Math.PI * 2);
+      ctx.arc(201, 210, 12, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Rostro / Cabeza
+      ctx.fillStyle = '#f0be92';
+      ctx.beginPath();
+      ctx.arc(128, 90, 38, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Ojos Grandes Expresivos
+      ctx.fillStyle = '#2c1e14';
+      ctx.beginPath();
+      ctx.ellipse(114, 88, 7, 10, 0, 0, Math.PI * 2);
+      ctx.ellipse(142, 88, 7, 10, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Brillos en los ojos
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(112, 85, 3, 0, Math.PI * 2);
+      ctx.arc(140, 85, 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Sonrisa
+      ctx.strokeStyle = '#8a4e28';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(128, 100, 14, 0.2, Math.PI - 0.2);
+      ctx.stroke();
+
+      // Gorra Negra hacia atrás con visera
+      ctx.fillStyle = '#1a1a24';
+      ctx.beginPath();
+      ctx.arc(128, 75, 42, Math.PI, 0);
+      ctx.fill();
+      ctx.fillRect(86, 70, 84, 18);
+      // Visera trasera
+      ctx.fillStyle = '#2e2e3d';
+      ctx.beginPath();
+      ctx.roundRect(145, 62, 35, 10, 4);
+      ctx.fill();
+
+      return new THREE.CanvasTexture(canvas);
+    }
+
+    // --- TEXTURAS PARA VALLAS Y BLOQUES ? ---
+    function createQuestionBlockTexture() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 128;
+      canvas.height = 128;
+      const ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillRect(0, 0, 128, 128);
+
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 10;
+      ctx.strokeRect(5, 5, 118, 118);
+
+      // Remaches
+      ctx.fillStyle = '#78350f';
+      ctx.fillRect(12, 12, 8, 8);
+      ctx.fillRect(108, 12, 8, 8);
+      ctx.fillRect(12, 108, 8, 8);
+      ctx.fillRect(108, 108, 8, 8);
+
+      // Signo de interrogación
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 70px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('?', 64, 92);
+
+      return new THREE.CanvasTexture(canvas);
     }
 
     function createBillboardTexture(title, subtitle) {
@@ -313,15 +457,15 @@
       canvas.height = 256;
       const ctx = canvas.getContext('2d');
 
-      ctx.fillStyle = '#0a0d1e';
+      ctx.fillStyle = '#060919';
       ctx.fillRect(0, 0, 512, 256);
 
       ctx.strokeStyle = '#00f0ff';
-      ctx.lineWidth = 10;
-      ctx.strokeRect(5, 5, 502, 246);
+      ctx.lineWidth = 12;
+      ctx.strokeRect(6, 6, 500, 244);
 
       ctx.fillStyle = '#39ff14';
-      ctx.font = 'bold 30px sans-serif';
+      ctx.font = '900 32px sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText(title, 256, 105);
 
@@ -332,31 +476,35 @@
       return new THREE.CanvasTexture(canvas);
     }
 
+    // --- INICIALIZACIÓN 3D ---
     function init() {
       const container = document.getElementById('game-container');
 
       scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x080914);
-      scene.fog = new THREE.FogExp2(0x080914, 0.02);
+      scene.background = new THREE.Color(0x04050e);
+      scene.fog = new THREE.FogExp2(0x04050e, 0.016);
 
-      camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 150);
-      camera.position.set(0, 4.2, 6.5);
-      camera.lookAt(0, 1.2, -6);
+      camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 160);
+      camera.position.set(0, 4.2, 6.2);
+      camera.lookAt(0, 1.3, -6);
 
-      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.shadowMap.enabled = true;
       container.appendChild(renderer.domElement);
 
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+      // Iluminación
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
       scene.add(ambientLight);
 
-      const dirLight = new THREE.DirectionalLight(0x00f0ff, 0.8);
-      dirLight.position.set(6, 14, 6);
+      const dirLight = new THREE.DirectionalLight(0x00f0ff, 0.9);
+      dirLight.position.set(10, 20, 10);
       scene.add(dirLight);
 
       createTrack();
+      createCitySkyline();
+      createParticleStars();
       createPlayer();
       setupControls();
 
@@ -364,90 +512,100 @@
     }
 
     function createTrack() {
-      const roadGeo = new THREE.PlaneGeometry(8, 250);
-      const roadMat = new THREE.MeshStandardMaterial({ color: 0x141524, roughness: 0.8 });
+      const roadGeo = new THREE.PlaneGeometry(8.2, 300);
+      const roadMat = new THREE.MeshStandardMaterial({ color: 0x0f111e, roughness: 0.7 });
       const road = new THREE.Mesh(roadGeo, roadMat);
       road.rotation.x = -Math.PI / 2;
-      road.position.z = -70;
+      road.position.z = -80;
       scene.add(road);
 
-      for (let x of [-1.25, 1.25]) {
-        const lineGeo = new THREE.PlaneGeometry(0.12, 250);
+      // Líneas de carril de neón
+      for (let x of [-1.35, 1.35]) {
+        const lineGeo = new THREE.PlaneGeometry(0.12, 300);
         const lineMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
         const line = new THREE.Mesh(lineGeo, lineMat);
         line.rotation.x = -Math.PI / 2;
-        line.position.set(x, 0.02, -70);
+        line.position.set(x, 0.02, -80);
         scene.add(line);
       }
 
-      for (let x of [-4.1, 4.1]) {
-        const borderGeo = new THREE.BoxGeometry(0.3, 0.5, 250);
+      // Bordes luminosos
+      for (let x of [-4.2, 4.2]) {
+        const borderGeo = new THREE.BoxGeometry(0.35, 0.6, 300);
         const borderMat = new THREE.MeshStandardMaterial({ color: 0x39ff14, emissive: 0x116600 });
         const border = new THREE.Mesh(borderGeo, borderMat);
-        border.position.set(x, 0.25, -70);
+        border.position.set(x, 0.3, -80);
         scene.add(border);
       }
     }
 
+    // Edificios estilo Metrópolis Neón
+    function createCitySkyline() {
+      const buildingGeo = new THREE.BoxGeometry(6, 35, 8);
+      for (let i = 0; i < 20; i++) {
+        const isLeft = i % 2 === 0;
+        const color = isLeft ? 0x0a1026 : 0x120a26;
+        const mat = new THREE.MeshStandardMaterial({ color: color, roughness: 0.9 });
+        const building = new THREE.Mesh(buildingGeo, mat);
+        const xPos = isLeft ? -12 - Math.random() * 4 : 12 + Math.random() * 4;
+        const zPos = -i * 14;
+        building.position.set(xPos, 10, zPos);
+        scene.add(building);
+        buildings.push(building);
+      }
+    }
+
+    // Partículas luminosas flotantes
+    function createParticleStars() {
+      const particleGeo = new THREE.BufferGeometry();
+      const count = 120;
+      const positions = new Float32Array(count * 3);
+
+      for (let i = 0; i < count * 3; i += 3) {
+        positions[i] = (Math.random() - 0.5) * 30;
+        positions[i + 1] = Math.random() * 15;
+        positions[i + 2] = -Math.random() * 120;
+      }
+
+      particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const particleMat = new THREE.PointsMaterial({
+        color: 0x00f0ff,
+        size: 0.3,
+        transparent: true,
+        opacity: 0.8
+      });
+      particles = new THREE.Points(particleGeo, particleMat);
+      scene.add(particles);
+    }
+
     function createPlayer() {
-      player = new THREE.Group();
+      playerGroup = new THREE.Group();
 
-      const bodyGeo = new THREE.BoxGeometry(0.7, 0.9, 0.45);
-      const bodyMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.4 });
-      bodyMesh = new THREE.Mesh(bodyGeo, bodyMat);
-      bodyMesh.position.y = 0.9;
-      player.add(bodyMesh);
+      const aleTexture = createAleCharacterTexture();
+      const spriteMat = new THREE.SpriteMaterial({ map: aleTexture, transparent: true });
+      playerSprite = new THREE.Sprite(spriteMat);
+      playerSprite.scale.set(2.1, 2.7, 1);
+      playerSprite.position.y = 1.35;
+      playerGroup.add(playerSprite);
 
-      const stripeGeo = new THREE.BoxGeometry(0.72, 0.25, 0.47);
-      const stripeMat = new THREE.MeshStandardMaterial({ color: 0x39ff14, emissive: 0x115500 });
-      const stripe = new THREE.Mesh(stripeGeo, stripeMat);
-      stripe.position.y = 0.9;
-      player.add(stripe);
-
-      const headGeo = new THREE.BoxGeometry(0.5, 0.5, 0.45);
-      const headMat = new THREE.MeshStandardMaterial({ color: 0xf2c49b });
-      const head = new THREE.Mesh(headGeo, headMat);
-      head.position.y = 1.6;
-      player.add(head);
-
-      const capGeo = new THREE.BoxGeometry(0.54, 0.2, 0.5);
-      const capMat = new THREE.MeshStandardMaterial({ color: 0x222222 });
-      const capMesh = new THREE.Mesh(capGeo, capMat);
-      capMesh.position.set(0, 1.8, 0.05);
-      player.add(capMesh);
-
-      const visorGeo = new THREE.BoxGeometry(0.48, 0.06, 0.3);
-      const visor = new THREE.Mesh(visorGeo, capMat);
-      visor.position.set(0, 1.72, 0.35);
-      player.add(visor);
-
-      const legGeo = new THREE.BoxGeometry(0.25, 0.6, 0.3);
-      const legMat = new THREE.MeshStandardMaterial({ color: 0x24242e });
-      const legL = new THREE.Mesh(legGeo, legMat);
-      legL.position.set(-0.2, 0.3, 0);
-      const legR = new THREE.Mesh(legGeo, legMat);
-      legR.position.set(0.2, 0.3, 0);
-      player.add(legL);
-      player.add(legR);
-
-      player.position.set(LANES[currentLane], 0, 0);
-      scene.add(player);
+      playerGroup.position.set(LANES[currentLane], 0, 0);
+      scene.add(playerGroup);
     }
 
     function spawnBillboard(zPos) {
       const isLeft = Math.random() > 0.5;
-      const x = isLeft ? -5.8 : 5.8;
+      const x = isLeft ? -6.0 : 6.0;
 
       const adType = Math.random() > 0.5;
       const mainTitle = adType ? "TU REVISTA DIGITAL PR" : "ALE GAME LAND";
       const subTitle = adType ? "Edicion Digital & Contenido" : "@alegameland en YouTube";
 
-      const geo = new THREE.BoxGeometry(0.2, 2.5, 4.8);
+      const geo = new THREE.BoxGeometry(0.2, 2.8, 5.2);
       const mat = new THREE.MeshBasicMaterial({
         map: createBillboardTexture(mainTitle, subTitle)
       });
       const bb = new THREE.Mesh(geo, mat);
-      bb.position.set(x, 2.8, zPos);
+      bb.position.set(x, 3.0, zPos);
       scene.add(bb);
       billboards.push(bb);
     }
@@ -459,23 +617,35 @@
 
       let obs;
       if (type === 0) {
-        const geo = new THREE.BoxGeometry(1.2, 1.2, 1.2);
-        const mat = new THREE.MeshStandardMaterial({ color: 0xffaa00, emissive: 0x442200 });
+        // Bloque ? dorado estilo plataformas
+        const geo = new THREE.BoxGeometry(1.35, 1.35, 1.35);
+        const mat = new THREE.MeshStandardMaterial({
+          map: createQuestionBlockTexture(),
+          emissive: 0x332200,
+          roughness: 0.3
+        });
         obs = new THREE.Mesh(geo, mat);
-        obs.position.set(x, 0.6, zPos);
-        obs.userData = { height: 1.2 };
+        obs.position.set(x, 0.68, zPos);
+        obs.userData = { height: 1.35 };
       } else if (type === 1) {
-        const geo = new THREE.CylinderGeometry(0.65, 0.65, 1.6, 16);
-        const mat = new THREE.MeshStandardMaterial({ color: 0x39ff14, metalness: 0.3 });
+        // Tubería verde gamer
+        const geo = new THREE.CylinderGeometry(0.7, 0.7, 1.8, 20);
+        const mat = new THREE.MeshStandardMaterial({
+          color: 0x39ff14,
+          metalness: 0.4,
+          roughness: 0.2,
+          emissive: 0x053300
+        });
         obs = new THREE.Mesh(geo, mat);
-        obs.position.set(x, 0.8, zPos);
-        obs.userData = { height: 1.6 };
+        obs.position.set(x, 0.9, zPos);
+        obs.userData = { height: 1.8 };
       } else {
-        const geo = new THREE.BoxGeometry(1.8, 0.5, 0.3);
-        const mat = new THREE.MeshStandardMaterial({ color: 0xff0055, emissive: 0x660022 });
+        // Barrera láser ciberespacio
+        const geo = new THREE.BoxGeometry(1.9, 0.55, 0.35);
+        const mat = new THREE.MeshStandardMaterial({ color: 0xff0055, emissive: 0x880022 });
         obs = new THREE.Mesh(geo, mat);
-        obs.position.set(x, 0.25, zPos);
-        obs.userData = { height: 0.5 };
+        obs.position.set(x, 0.28, zPos);
+        obs.userData = { height: 0.55 };
       }
 
       scene.add(obs);
@@ -484,17 +654,22 @@
       const coinLaneIndex = (laneIndex + 1 + Math.floor(Math.random() * 2)) % 3;
       spawnCoin(LANES[coinLaneIndex], zPos);
 
-      if (Math.random() > 0.4) {
+      if (Math.random() > 0.35) {
         spawnBillboard(zPos);
       }
     }
 
     function spawnCoin(x, z) {
-      const coinGeo = new THREE.CylinderGeometry(0.35, 0.35, 0.08, 16);
-      const coinMat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.8, emissive: 0x665500 });
+      const coinGeo = new THREE.CylinderGeometry(0.38, 0.38, 0.09, 16);
+      const coinMat = new THREE.MeshStandardMaterial({
+        color: 0xffd700,
+        metalness: 0.85,
+        roughness: 0.15,
+        emissive: 0x665500
+      });
       const coin = new THREE.Mesh(coinGeo, coinMat);
       coin.rotation.x = Math.PI / 2;
-      coin.position.set(x, 0.8, z);
+      coin.position.set(x, 0.85, z);
       scene.add(coin);
       coins.push(coin);
     }
@@ -540,15 +715,17 @@
 
     function jump() {
       isJumping = true;
-      jumpVelocity = 0.22;
+      jumpVelocity = 0.24;
       playSound('jump');
     }
 
     function slide() {
       isSliding = true;
-      player.scale.set(1, 0.5, 1);
+      playerSprite.scale.set(2.1, 1.35, 1);
+      playerSprite.position.y = 0.68;
       setTimeout(() => {
-        player.scale.set(1, 1, 1);
+        playerSprite.scale.set(2.1, 2.7, 1);
+        playerSprite.position.y = 1.35;
         isSliding = false;
       }, 600);
     }
@@ -562,10 +739,10 @@
       billboards = [];
 
       currentLane = 1;
-      player.position.set(LANES[currentLane], 0, 0);
+      playerGroup.position.set(LANES[currentLane], 0, 0);
       distance = 0;
       coinsCount = 0;
-      speed = 0.45;
+      speed = 0.5;
       isJumping = false;
       isSliding = false;
 
@@ -573,7 +750,7 @@
       document.getElementById('gameover-screen').classList.add('hidden');
       isPlaying = true;
 
-      for (let z = -20; z > -120; z -= 14) {
+      for (let z = -20; z > -130; z -= 15) {
         spawnObstacle(z);
       }
     }
@@ -593,12 +770,12 @@
 
       let timeLeft = 3;
       const timerEl = document.getElementById('ad-timer-text');
-      timerEl.innerText = `Reanudando juego en ${timeLeft}s...`;
+      timerEl.innerText = `Reanudando en ${timeLeft}s...`;
 
       const interval = setInterval(() => {
         timeLeft--;
         if (timeLeft > 0) {
-          timerEl.innerText = `Reanudando juego en ${timeLeft}s...`;
+          timerEl.innerText = `Reanudando en ${timeLeft}s...`;
         } else {
           clearInterval(interval);
           adModal.classList.add('hidden');
@@ -609,13 +786,13 @@
 
     function revivePlayer() {
       obstacles.forEach(o => {
-        if (o.position.z > -15 && o.position.z < 10) {
+        if (o.position.z > -18 && o.position.z < 10) {
           scene.remove(o);
         }
       });
-      obstacles = obstacles.filter(o => !(o.position.z > -15 && o.position.z < 10));
+      obstacles = obstacles.filter(o => !(o.position.z > -18 && o.position.z < 10));
 
-      player.position.set(LANES[currentLane], 0, 0);
+      playerGroup.position.set(LANES[currentLane], 0, 0);
       isJumping = false;
       isSliding = false;
       isPlaying = true;
@@ -629,30 +806,41 @@
       document.getElementById('score-dist').innerText = `${Math.floor(distance)}m`;
       document.getElementById('score-coins').innerText = coinsCount;
 
-      player.position.x += (LANES[currentLane] - player.position.x) * 0.22;
+      playerGroup.position.x += (LANES[currentLane] - playerGroup.position.x) * 0.22;
 
+      // Físicas de Salto
       if (isJumping) {
-        player.position.y += jumpVelocity;
+        playerGroup.position.y += jumpVelocity;
         jumpVelocity -= gravity * 0.035;
-        if (player.position.y <= 0) {
-          player.position.y = 0;
+        if (playerGroup.position.y <= 0) {
+          playerGroup.position.y = 0;
           isJumping = false;
         }
       }
 
+      // Animación de carrera para Ale
       if (!isJumping && !isSliding) {
-        bodyMesh.rotation.z = Math.sin(Date.now() * 0.015) * 0.05;
+        playerSprite.position.y = 1.35 + Math.abs(Math.sin(Date.now() * 0.015)) * 0.12;
       }
 
+      // Desplazamiento de edificios
+      buildings.forEach(b => {
+        b.position.z += speed * 0.4;
+        if (b.position.z > 15) {
+          b.position.z = -140;
+        }
+      });
+
+      // Movimiento de obstáculos
       for (let i = obstacles.length - 1; i >= 0; i--) {
         const obs = obstacles[i];
         obs.position.z += speed;
 
-        const dx = Math.abs(player.position.x - obs.position.x);
-        const dz = Math.abs(player.position.z - obs.position.z);
+        const dx = Math.abs(playerGroup.position.x - obs.position.x);
+        const dz = Math.abs(playerGroup.position.z - obs.position.z);
 
-        if (dx < 0.7 && dz < 0.8) {
-          const isOverObstacle = player.position.y > (obs.userData.height - 0.2);
+        if (dx < 0.75 && dz < 0.8) {
+          const isOverObstacle = playerGroup.position.y > (obs.userData.height - 0.2);
           if (!isOverObstacle) {
             gameOver();
             return;
@@ -663,18 +851,19 @@
           scene.remove(obs);
           obstacles.splice(i, 1);
           const furthestZ = obstacles.reduce((min, o) => Math.min(min, o.position.z), -50);
-          spawnObstacle(furthestZ - 16);
+          spawnObstacle(furthestZ - 15);
         }
       }
 
+      // Monedas giratorias
       for (let i = coins.length - 1; i >= 0; i--) {
         const coin = coins[i];
         coin.position.z += speed;
-        coin.rotation.z += 0.05;
+        coin.rotation.z += 0.06;
 
-        const dx = Math.abs(player.position.x - coin.position.x);
-        const dz = Math.abs(player.position.z - coin.position.z);
-        if (dx < 0.8 && dz < 0.8) {
+        const dx = Math.abs(playerGroup.position.x - coin.position.x);
+        const dz = Math.abs(playerGroup.position.z - coin.position.z);
+        if (dx < 0.85 && dz < 0.85) {
           coinsCount++;
           playSound('coin');
           scene.remove(coin);
@@ -688,6 +877,7 @@
         }
       }
 
+      // Vallas de patrocinio
       for (let i = billboards.length - 1; i >= 0; i--) {
         const bb = billboards[i];
         bb.position.z += speed;
